@@ -14,66 +14,66 @@ outputs = ["Reveal"]
 
 {{< slide id="intro" >}}
 
-## __GenAI__: Intelligenza Artificiale _Generativa_
+## __GenAI__: _Generative_ Artificial Intelligence
 
-<!-- > [Sistemi basati su] <br> -->
-Algoritmi di _IA_ in grado di __generare automaticamente__ _contenuti_, e.g.:
-- _testo_
-- immagini
-- audio e/o video
-- codice [di programmazione]
+<!-- > [Systems based on] <br> -->
+_AI_ algorithms capable of __automatically generating__ _content_, e.g.:
+- _text_
+- images
+- audio and/or video
+- [source] code
 - ...
 
-(cf. [Policy per un uso etico e responsabile dell’Intelligenza Artificiale Generativa nelle attività di didattica e ricerca](https://www.unibo.it/it/allegati/policy-per-un-uso-etico-e-responsabile-dell2019intelligenza-artificiale-generativa-nelle-attivita-di-didattica-e-ricerca/@@download/file/Policy-Generative-AI.pdf))
+(cf. [Policy for the ethical and responsible use of Generative Artificial Intelligence in teaching and research activities](https://www.unibo.it/it/allegati/policy-per-un-uso-etico-e-responsabile-dell2019intelligenza-artificiale-generativa-nelle-attivita-di-didattica-e-ricerca/@@download/file/Policy-Generative-AI.pdf))
 
 ---
 
-## GenAI mediante _Modelli Fondazionali_ (FM)
+## GenAI through _Foundation Models_ (FM)
 
-+ Grosse _reti neurali_ che imparano ad _elaborare_, _"capire"_, e _produrre_ __dati non__ [necessariamente] __strutturati__
-+ __allenati__ su _grandi_ quantità di dati, e con _grandi_ risorse computazionali, a __fare un po' tutto__
-    - con l'idea di poterli poi __specializzare__ per _compiti specifici_
++ Large _neural networks_ that learn to _process_, _"understand"_, and _produce_ [not necessarily] __structured__ and __unstructured__ data
++ __trained__ on _large_ amounts of data, and with _large_ computational resources, to __do a bit of everything__
+    - with the idea that they can later be __specialized__ for _specific tasks_
 
 <br>
-{{< image src="./foundation-models.png" max-h="60vh" alt="Concept dei modelli fondazionali">}}
+{{< image src="./foundation-models.png" max-h="60vh" alt="Foundation models concept">}}
 
 ---
 
-## __Terminologia__: Modelli Fondazionali vs. _Large Language Models_
+## __Terminology__: Foundation Models vs. _Large Language Models_
 
-{{< image src="./fm-vs-llm.webp" width="80%" max-h="70vh" alt="Diagramma di Venn che spiega come gli LLM siano un caso particolare di modelli fondazionali " link="https://thebabar.medium.com/essential-guide-to-foundation-models-and-large-language-models-27dab58f7404" >}}
+{{< image src="./fm-vs-llm.webp" width="80%" max-h="70vh" alt="Venn diagram explaining how LLMs are a specific case of foundation models" link="https://thebabar.medium.com/essential-guide-to-foundation-models-and-large-language-models-27dab58f7404" >}}
 
 ---
 
 {{% section %}}
 
-## GenAI con modello di consumo _as-a-Service_
+## GenAI with an _as-a-Service_ consumption model
 
-{{< image src="./llm-concept.svg" width="100%" max-h="70vh" alt="Modello di consumo 'as a Service' per i modelli fondazionali" >}}
+{{< image src="./llm-concept.svg" width="100%" max-h="70vh" alt="'As-a-Service' consumption model for foundation models" >}}
 
 ---
 
-## GenAI con modello di consumo _as-a-Service_
+## GenAI with an _as-a-Service_ consumption model
 
-- Modelli di __costo__:
-    + ad __abbonamento__: si paga un _canone_ fisso mensile/annuale per avere accesso al servizio
-        * spesso contiene comunque _limiti_ di consumo
-    + a __consumo__: si paga in _proporzione_ all'uso effettivo del servizio
+- __Cost__ models:
+    + __subscription-based__: you pay a fixed monthly/annual _fee_ to access the service
+        * it often still includes _usage_ limits
+    + __usage-based__: you pay _in proportion_ to the actual use of the service
 
-- __Consumo__ è misurato in base allo _sforzo computazionale_ necessario per servire la richiesta:
-    + _token_ processati (per testo)
-    + quantità di _richieste_ effettuate per unità di tempo (minto, ore, giorno, mese)
-    + _dimensione_ dei dati processati (per immagini, audio, video)
-    + _complessità_ dello specifico _modello_ impiegato per per servire la richiesta
+- __Consumption__ is measured based on the _computational effort_ required to serve the request:
+    + processed _tokens_ (for text)
+    + number of _requests_ made per unit of time (minute, hour, day, month)
+    + _size_ of the processed data (for images, audio, video)
+    + _complexity_ of the specific _model_ used to serve the request
 
-- La __generazione__ da considerarsi un processo _stocastico_, per costruzione
+- __Generation__ should be considered a _stochastic_ process by construction
 
 {{% fragment %}}
-> - La __qualità__ del servizio è soggetta a casualità e a _fluttuazioni_ dovute a:
->    + _carico_ del servizio
->    + scelta del modello, e relativo _aggiornamento_
->    + _limiti_ di servizio eventualumente raggiunti nel _quanto di tempo_ corrente
->    + caso
+> - The __quality__ of the service is subject to randomness and _fluctuations_ due to:
+>    + service _load_
+>    + model choice, and its related _updates_
+>    + service _limits_ possibly reached in the current _time window_
+>    + chance
 {{% /fragment %}}
 
 {{% /section %}}
@@ -82,47 +82,47 @@ Algoritmi di _IA_ in grado di __generare automaticamente__ _contenuti_, e.g.:
 
 {{% section %}}
 
-## Ciclo di _apprendimento_ di GenAI
+## GenAI _learning_ cycle
 
-{{< image src="./dataflow.svg" width="100%" max-h="70vh" alt="Ciclo di apprendimento di GenAI" >}}
+{{< image src="./dataflow.svg" width="100%" max-h="70vh" alt="GenAI learning cycle" >}}
 
 ---
 
-## Ciclo di _apprendimento_ di GenAI — __Conseguenze__ (pt. 1)
+## GenAI _learning_ cycle — __Consequences__ (pt. 1)
 
-- __Bias__ di __campionamento__: GenAI conosce _solo_ ciò su cui è stato _allenato_ + pia speranza che impari a _generalizzare_
+- __Sampling__ __bias__: GenAI knows _only_ what it has been _trained_ on + the pious hope that it learns to _generalize_
 
-- L'apprendimento usa dati presi __dal Web__ + eventuali __dati aziendali__ del fornitore del servizio
-    + comprovato impiego delle _interazioni_ degli utenti precedenti come _feedback_ per allenamenti successivi
+- Learning uses data taken __from the Web__ + possible provider-owned __company data__
+    + there is documented use of previous users' _interactions_ as _feedback_ for subsequent training
 
 {{% fragment %}}
 ##
 
-> - Informazioni di __nicchia__ possono <u>non</u> essere apprese correttamente (o affatto)
-> - Fondamentale __evitare di convididere__ informazioni _sensibili_, _confidenziali_, o protette da _diritti d'autore_
+> - __Niche__ information may <u>not</u> be learned correctly (or at all)
+> - It is essential to __avoid sharing__ _sensitive_, _confidential_, or _copyrighted_ information
 {{% /fragment %}}
 
 ---
 
-## Ciclo di _apprendimento_ di GenAI — __Conseguenze__ (pt. 2)
+## GenAI _learning_ cycle — __Consequences__ (pt. 2)
 
-- Cicli di apprendimento estramente __costosi__ in termini di _denaro_ e _risorse computazionali_...
+- Learning cycles are extremely __expensive__ in terms of _money_ and _computational resources_...
 
-- ... eseguiti __periodicamente__ (settimane? mesi?) per migliorare la _qualità_ del servizio
-    + il modello di consumo _as-a-Service_ permette all'utente di avere accesso traspente al servizio _aggiornato_
+- ... performed __periodically__ (weeks? months?) to improve the _quality_ of the service
+    + the _as-a-Service_ consumption model gives the user transparent access to the _updated_ service
 
 
 {{% fragment %}}
 ##
 
-> - Informazioni __recenti__ potrebbero <u>non</u> essere state (ancora) _apprese_
-> - Rischio di ricevere risposte __datate__ o _manchevoli_ da GenAI
-> - GenAI dà l'_impressione_ di star imparando __durante la conversazione__, ma in realtà lo fa _offline_
+> - __Recent__ information may <u>not</u> have been _learned_ yet
+> - There is a risk of receiving __outdated__ or _incomplete_ answers from GenAI
+> - GenAI gives the _impression_ of learning __during the conversation__, but it actually does so _offline_
 {{% /fragment %}}
 
 ---
 
-## Alcune soluzioni tecnologiche permettono di _scegliere_ (pt. 1)
+## Some technological solutions let you _choose_ (pt. 1)
 
 {{< image src="./logo-chatgpt.svg" height="2em" >}}
 <br/>
@@ -130,7 +130,7 @@ Algoritmi di _IA_ in grado di __generare automaticamente__ _contenuti_, e.g.:
 
 ---
 
-## Alcune soluzioni tecnologiche permettono di _scegliere_ (pt. 2)
+## Some technological solutions let you _choose_ (pt. 2)
 
 {{< image src="./logo-chatgpt.svg" height="2em" >}}
 <br/>
@@ -138,7 +138,7 @@ Algoritmi di _IA_ in grado di __generare automaticamente__ _contenuti_, e.g.:
 
 ---
 
-## Alcune soluzioni tecnologiche permettono di _scegliere_ (pt. 3)
+## Some technological solutions let you _choose_ (pt. 3)
 
 {{< image src="./logo-chatgpt.svg" height="2em" >}}
 <br/>
@@ -146,7 +146,7 @@ Algoritmi di _IA_ in grado di __generare automaticamente__ _contenuti_, e.g.:
 
 ---
 
-## Alcune soluzioni tecnologiche permettono di _scegliere_ (pt. 4)
+## Some technological solutions let you _choose_ (pt. 4)
 
 {{< image src="./logo-chatgpt.svg" height="2em" >}}
 <br/>
@@ -158,22 +158,22 @@ Algoritmi di _IA_ in grado di __generare automaticamente__ _contenuti_, e.g.:
 
 {{< slide id="interfaces" >}}
 
-# Principali soluzioni __tecnologiche__
+# Main __technological__ solutions
 
-## Categorizzate per tipo di __interfaccia__
+## Categorized by type of __interface__
 
-- _Conversazionali_: e.g. [ChatGPT](https://chatgpt.com/), [Claude](https://claude.ai/login?returnTo=%2F%3F), [Scite](https://scite.ai)
-- _Auto-completamento_: e.g. [GitHub Copilot](https://github.com/features/copilot)
-- _Programmatiche_: e.g. [OpenAI Platform](https://openai.com/api/), [Hugging Face](https://huggingface.co/)
+- _Conversational_: e.g. [ChatGPT](https://chatgpt.com/), [Claude](https://claude.ai/login?returnTo=%2F%3F), [Scite](https://scite.ai)
+- _Auto-completion_: e.g. [GitHub Copilot](https://github.com/features/copilot)
+- _Programmatic_: e.g. [OpenAI Platform](https://openai.com/api/), [Hugging Face](https://huggingface.co/)
 - _In-App_: e.g. [Microsoft 365 Copilot](https://www.microsoft.com/it-it/microsoft-365/copilot?market=it)
-- _Editing di audio-visivi_: e.g. [Suno](https://suno.com/), [Runway](https://runwayml.com/)
-- _Ispezione di materiale generato_: e.g. [GPTZero](https://gptzero.me/), [ZeroGPT](https://www.zerogpt.com/)
+- _Audio/video editing_: e.g. [Suno](https://suno.com/), [Runway](https://runwayml.com/)
+- _Inspection of generated material_: e.g. [GPTZero](https://gptzero.me/), [ZeroGPT](https://www.zerogpt.com/)
 
-{{% color "red" %}}Lista non esaustiva!{{% /color %}}
+{{% color "red" %}}Non-exhaustive list!{{% /color %}}
 
 ---
 
-## Interfaccia __conversazionale__
+## __Conversational__ interface
 
 {{% multicol %}}
 {{% col %}}
@@ -183,21 +183,21 @@ Algoritmi di _IA_ in grado di __generare automaticamente__ _contenuti_, e.g.:
 {{% col %}}
 <br>
 
-- Interazione _testuale_ che mima una _corrispondenza_ (__chat__)
-    + l'utente chiede, l'IA risponde _reattivamente_
-- L'interfaccia permette l'inserimento di un __prompt__
-    + opzionalmente contenente _allegati_ (e.g. immagini, documenti)
-- Le risposte sono __contestuali__
-    + i.e., lo _storico_ della conversazione impatta le risposte _future_
-- La risposta contiene __testo__ (spesso _formattato_)
-    + opzionalmente: _immagini_, URL, codice
+- _Textual_ interaction that mimics a (__chat__) _exchange_
+    + the user asks, the AI responds _reactively_
+- The interface allows entering a __prompt__
+    + optionally including _attachments_ (e.g. images, documents)
+- Responses are __contextual__
+    + i.e., the conversation _history_ affects _future_ responses
+- The response contains __text__ (often _formatted_)
+    + optionally: _images_, URLs, code
 
 {{% fragment %}}
 
-### Talvolta...
+### Sometimes...
 
-- ... prima di rispondere, l'IA fa una __ricerca__ su _Web_
-- importante per avere risultati _aggiornati_
+- ... before responding, the AI performs a __Web__ _search_
+- important for obtaining _up-to-date_ results
 
 {{% /fragment %}}
 
@@ -206,7 +206,7 @@ Algoritmi di _IA_ in grado di __generare automaticamente__ _contenuti_, e.g.:
 
 ---
 
-## Interfaccia basata su __auto-completamento__
+## __Auto-completion__ interface
 
 {{% multicol %}}
 {{% col %}}
@@ -216,17 +216,17 @@ Algoritmi di _IA_ in grado di __generare automaticamente__ _contenuti_, e.g.:
 {{% col %}}
 <br>
 
-- L'IA _suggerisce_ un __completamento__ per il testo inserito
-    + e.g., codice, testo, URL
-- L'utente __accetta__ (anche in parte) o _ignora_ il suggerimento
-- Usato anche e soprattutto per __codice__ di _programmazione_
+- The AI _suggests_ a __completion__ for the entered text
+    + e.g., code, text, URLs
+- The user __accepts__ (even partially) or _ignores_ the suggestion
+- Used especially for __programming__ _code_
 
 {{% fragment %}}
 
-### Attenzione...
-- ... modello di costo ad __abbonamento__ (vedi [qui](https://github.com/features/copilot/plans))
-- ... potenziali __leak__ di informazioni _sensibili_
-- ... rischio di __lock-in__ non trascurabile
+### Attention...
+- ... __subscription__ pricing model (see [here](https://github.com/features/copilot/plans))
+- ... potential __leaks__ of _sensitive_ information
+- ... non-negligible __lock-in__ risk
 
 {{% /fragment %}}
 
@@ -235,7 +235,7 @@ Algoritmi di _IA_ in grado di __generare automaticamente__ _contenuti_, e.g.:
 
 ---
 
-## Interfaccia __programmatica__
+## __Programmatic__ interface
 
 {{% multicol %}}
 {{% col class="col-6" %}}
@@ -268,33 +268,33 @@ Albania, Andorra, Austria, Belarus, Belgium, Bosnia and Herzegovina, Bulgaria, C
 {{% /col %}}
 {{% col %}}
 
-- __Linguaggio di programmazione__ che interagisce con IA
+- __Programming language__ interacting with AI
     + e.g., _Python_, JavaScript
 
-- L'interazione rimane di tipo _richiesta-risposta_
-    + il __programma__ invia una _richiesta_, l'IA _risponde_
+- The interaction remains of the _request-response_ type
+    + the __program__ sends a _request_, the AI _responds_
 
 {{% fragment %}}
 
-### Abilitante per
+### Enables
 
-- Prompt __parametrici__, risposte processate _automaticamente_
-    + es. `list of LOCALITIES in AREA, one by line`
-        + dove `LOCALITIES` $\in$ {`cities`, `regions`, `states`}
-        + e `AREA` $\in$ {`Europe`, `Asia`, `Africa`, `America`, `Oceania`}
-        + risultati _ordinati alfabeticamente_
+- __Parametric__ prompts, responses processed _automatically_
+    + e.g. `list of LOCALITIES in AREA, one by line`
+        + where `LOCALITIES` $\in$ {`cities`, `regions`, `states`}
+        + and `AREA` $\in$ {`Europe`, `Asia`, `Africa`, `America`, `Oceania`}
+        + results _sorted alphabetically_
 
-- Scrittura __software__ che usa l'IA come __servizio__
-    + utile in _industria_ come in _ricerca_
+- Writing __software__ that uses AI as a __service__
+    + useful in both _industry_ and _research_
 
 {{% /fragment %}}
 
 {{% fragment %}}
 
-### Attenzione...
-- ... modello di costo __a consumo__ (vedi [qui](https://openai.com/api/pricing/))
-    + proporzionale al numero di _token_ processati
-    + prezzi variabili _per modello_
+### Attention...
+- ... __usage-based__ pricing model (see [here](https://openai.com/api/pricing/))
+    + proportional to the number of processed _tokens_
+    + prices vary _by model_
 
 {{% /fragment %}}
 
@@ -303,7 +303,7 @@ Albania, Andorra, Austria, Belarus, Belgium, Bosnia and Herzegovina, Bulgaria, C
 
 ---
 
-## Interfaccia __in-app__
+## __In-app__ interface
 
 {{% multicol %}}
 {{% col %}}
@@ -313,22 +313,22 @@ Albania, Andorra, Austria, Belarus, Belgium, Bosnia and Herzegovina, Bulgaria, C
 {{% col %}}
 <br>
 
-- GenAI integrata in __applicazioni__ _desktop_ o _web_
+- GenAI integrated into __desktop__ or _web_ __applications__
     + e.g., _Microsoft Office_ (Word, Excel, Outlook)
 
-- supporto per interfaccia __conversazionale__ _interna_
-    + conversazione intrinsecamente _contestualizzata_
+- support for an internal __conversational__ interface
+    + a conversation that is intrinsically _contextualized_
 
-- IA __automatizza__ _operazioni complesse_ (interne all'app)
-    + e.g., _scrittura_ di bozze
-    + e.g., _generazione_ di formule, grafici
+- AI __automates__ _complex operations_ (within the app)
+    + e.g., draft _writing_
+    + e.g., _generation_ of formulas, charts
 
 {{% fragment %}}
 
-### Attenzione...
-- ... modello di costo ad __abbonamento__ (vedi [qui](https://www.microsoft.com/it-it/microsoft-365/copilot?market=it#plans))
-- ... potenziali __leak__ di informazioni _sensibili_
-- ... rischio di __lock-in__ non trascurabile
+### Attention...
+- ... __subscription__ pricing model (see [here](https://www.microsoft.com/it-it/microsoft-365/copilot?market=it#plans))
+- ... potential __leaks__ of _sensitive_ information
+- ... non-negligible __lock-in__ risk
 
 {{% /fragment %}}
 
@@ -337,7 +337,7 @@ Albania, Andorra, Austria, Belarus, Belgium, Bosnia and Herzegovina, Bulgaria, C
 
 ---
 
-## Interfaccia per __editing__ di audio-visivi (e.g. _musica_)
+## Interface for __editing__ audio/video content (e.g. _music_)
 
 {{% multicol %}}
 {{% col %}}
@@ -345,20 +345,20 @@ Albania, Andorra, Austria, Belarus, Belgium, Bosnia and Herzegovina, Bulgaria, C
 {{< image src="./generate-song-1.png" width="100%" >}}
 {{% /col %}}
 {{% col %}}
-- Interazione __one-shot__ per generare il contenuto
-    + _input_: descrizione testuale del contenuto
-    + _output_: contenuto
+- __One-shot__ interaction to generate content
+    + _input_: textual description of the content
+    + _output_: content
 
-- L'interfaccia permette poi
-    + _riproduzione_ del contenuto
-    + __modifica__ del contenuto
-        + e.g., _taglio_ di parti, _modifica_ di tonalità
+- The interface then allows
+    + _playback_ of the content
+    + __editing__ of the content
+        + e.g., _cutting_ parts, _changing_ key
 
 {{% fragment %}}
 
-### Esempio
+### Example
 
-- ["Canzona di Bacco" (Lorenzo il Magnifico, 1490)](https://it.wikipedia.org/wiki/Il_trionfo_di_Bacco_e_Arianna_(poesia)), rock
+- ["Song of Bacchus" (Lorenzo de' Medici, 1490)](https://it.wikipedia.org/wiki/Il_trionfo_di_Bacco_e_Arianna_(poesia)), rock
     + <https://suno.com/song/cce33ee7-a581-47ae-b9d1-806902e88e47>
 
 {{% /fragment %}}
@@ -369,19 +369,19 @@ Albania, Andorra, Austria, Belarus, Belgium, Bosnia and Herzegovina, Bulgaria, C
 
 {{< slide id="modes" >}}
 
-# Principali __modalità d'utilizzo__
+# Main __usage modes__
 
-## Categorizzate per __ruolo di GenAI__
+## Categorized by GenAI __role__
 
-### GenAI come...
+### GenAI as...
 
-* ... _motore di ricerca_: uso GenAI per __ricercare__ informazioni
-* ... _assistente di (ri)scrittura_: uso GenAI per __(ri)scrivere__ documenti
-* ... _assistente di lettura_: uso GenAI per __acquisire informazioni__ da documenti
-* ... _assistende per l'elaborazione dei dati_: uso GenAI per __elaborare__ dati
-* ... _generatore di contenuti_: uso GenAI per __creare__ contenuti
+* ... a _search engine_: user is __searching for__ information
+* ... a _(re)writing_ assistant: user is __writing__ documents
+* ... a reading assistant: user is __extracting information__ from documents
+* ... a data-processing assistant: user is __processing__ data
+* ... a content generator: user is __creating__ content
 
-{{% color "red" %}}Lista non esaustiva!{{% /color %}}
+{{% color "red" %}}Non-exhaustive list!{{% /color %}}
 
 ---
 
