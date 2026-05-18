@@ -4,7 +4,7 @@
 
 <br>
 
-### Prof. {{<gc>}}, Tutor: {{<mm>}}
+### Prof. {{<gc>}}
 
 <br>
 
