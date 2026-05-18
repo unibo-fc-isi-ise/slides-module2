@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><link rel="stylesheet" href="/slides-module2/reveal-js/dist/reset.css">
 <link rel="stylesheet" href="/slides-module2/reveal-js/dist/reveal.css">
-  <link rel="stylesheet" href="/slides-module2/css/custom-theme.min.219186ca22eaac140108bdf70069a9a9df2e316c5aa7688f528125647817d30c.css" id="theme"><link rel="stylesheet" href="/slides-module2/highlight-js/solarized-dark.min.css">
+  <link rel="stylesheet" href="/slides-module2/css/custom-theme.min.2458cee62850c3edfc9bf25ae4efba404818dd6d3c51cb3e6207c7c3e1299613.css" id="theme"><link rel="stylesheet" href="/slides-module2/highlight-js/solarized-dark.min.css">
 <link href="https://fonts.googleapis.com/css?family=Roboto Mono" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css?family=Oxygen Mono" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css?family=Ubuntu Mono" rel="stylesheet">
@@ -34,8 +34,431 @@
 <p>Compiled on: 2026-05-18
  — <a href="?print-pdf&amp;pdfSeparateFragments=false"><i class="fa fa-print" aria-hidden="true"></i> printable version</a></p>
 <p><a href="../#/toc"><i class="fa fa-undo" aria-hidden="true"></i> back to ToC</a></p>
+</section>
+
+<section data-noprocess="" data-shortcode-slide="" id="intro">
+  
+<h2 id="genai-generative-artificial-intelligence"><strong>GenAI</strong>: <em>Generative</em> Artificial Intelligence</h2>
+<!-- > [Systems based on] <br> -->
+<p><em>AI</em> algorithms capable of <strong>automatically generating</strong> <em>content</em>, e.g.:</p>
+<ul>
+<li><em>text</em></li>
+<li>images</li>
+<li>audio and/or video</li>
+<li>[source] code</li>
+<li>…</li>
+</ul>
+<p>(cf. <a href="https://www.unibo.it/it/allegati/policy-per-un-uso-etico-e-responsabile-dell2019intelligenza-artificiale-generativa-nelle-attivita-di-didattica-e-ricerca/@@download/file/Policy-Generative-AI.pdf">Policy for the ethical and responsible use of Generative Artificial Intelligence in teaching and research activities</a>)</p>
 </section><section>
-<p>TBD</p>
+<h2 id="genai-through-foundation-models-fm">GenAI through <em>Foundation Models</em> (FM)</h2>
+<ul>
+<li>Large <em>neural networks</em> that learn to <em>process</em>, <em>“understand”</em>, and <em>produce</em> [not necessarily] <strong>structured</strong> and <strong>unstructured</strong> data</li>
+<li><strong>trained</strong> on <em>large</em> amounts of data, and with <em>large</em> computational resources, to <strong>do a bit of everything</strong>
+<ul>
+<li>with the idea that they can later be <strong>specialized</strong> for <em>specific tasks</em></li>
+</ul>
+</li>
+</ul>
+<br>
+
+
+
+
+
+<img src="./foundation-models.png" alt="Foundation models concept" style="max-width: 95vw; max-height: 60vh; object-fit: contain;">
+
+</section><section>
+<h2 id="terminology-foundation-models-vs-large-language-models"><strong>Terminology</strong>: Foundation Models vs. <em>Large Language Models</em></h2>
+
+
+
+
+
+<a href="https://thebabar.medium.com/essential-guide-to-foundation-models-and-large-language-models-27dab58f7404">
+
+<img src="./fm-vs-llm.webp" alt="Venn diagram explaining how LLMs are a specific case of foundation models" style="width: 80%; max-width: 95vw; max-height: 70vh; object-fit: contain;">
+
+</a>
+
+</section><section>
+
+
+<section data-shortcode-section="">
+<h2 id="genai-with-an-as-a-service-consumption-model">GenAI with an <em>as-a-Service</em> consumption model</h2>
+<img src="./llm-concept.svg" alt="'As-a-Service' consumption model for foundation models" style="width: 100%; max-width: 95vw; max-height: 70vh; object-fit: contain;">
+</section><section>
+<h2 id="genai-with-an-as-a-service-consumption-model-1">GenAI with an <em>as-a-Service</em> consumption model</h2>
+<ul>
+<li>
+<p><strong>Cost</strong> models:</p>
+<ul>
+<li><strong>subscription-based</strong>: you pay a fixed monthly/annual <em>fee</em> to access the service
+<ul>
+<li>it often still includes <em>usage</em> limits</li>
+</ul>
+</li>
+<li><strong>usage-based</strong>: you pay <em>in proportion</em> to the actual use of the service</li>
+</ul>
+</li>
+<li>
+<p><strong>Consumption</strong> is measured based on the <em>computational effort</em> required to serve the request:</p>
+<ul>
+<li>processed <em>tokens</em> (for text)</li>
+<li>number of <em>requests</em> made per unit of time (minute, hour, day, month)</li>
+<li><em>size</em> of the processed data (for images, audio, video)</li>
+<li><em>complexity</em> of the specific <em>model</em> used to serve the request</li>
+</ul>
+</li>
+<li>
+<p><strong>Generation</strong> should be considered a <em>stochastic</em> process by construction</p>
+</li>
+</ul>
+<span class="fragment ">
+  <blockquote>
+<ul>
+<li>The <strong>quality</strong> of the service is subject to randomness and <em>fluctuations</em> due to:
+<ul>
+<li>service <em>load</em></li>
+<li>model choice, and its related <em>updates</em></li>
+<li>service <em>limits</em> possibly reached in the current <em>time window</em></li>
+<li>chance</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+</span>
+
+</section>
+</section><section>
+
+
+<section data-shortcode-section="">
+<h2 id="genai-learning-cycle">GenAI <em>learning</em> cycle</h2>
+<img src="./dataflow.svg" alt="GenAI learning cycle" style="width: 100%; max-width: 95vw; max-height: 70vh; object-fit: contain;">
+</section><section>
+<h2 id="genai-learning-cycle--consequences-pt-1">GenAI <em>learning</em> cycle — <strong>Consequences</strong> (pt. 1)</h2>
+<ul>
+<li>
+<p><strong>Sampling</strong> <strong>bias</strong>: GenAI knows <em>only</em> what it has been <em>trained</em> on + the pious hope that it learns to <em>generalize</em></p>
+</li>
+<li>
+<p>Learning uses data taken <strong>from the Web</strong> + possible provider-owned <strong>company data</strong></p>
+<ul>
+<li>there is documented use of previous users’ <em>interactions</em> as <em>feedback</em> for subsequent training</li>
+</ul>
+</li>
+</ul>
+<span class="fragment ">
+  <h2></h2>
+<blockquote>
+<ul>
+<li><strong>Niche</strong> information may <u>not</u> be learned correctly (or at all)</li>
+<li>It is essential to <strong>avoid sharing</strong> <em>sensitive</em>, <em>confidential</em>, or <em>copyrighted</em> information</li>
+</ul>
+</blockquote>
+</span>
+</section><section>
+<h2 id="genai-learning-cycle--consequences-pt-2">GenAI <em>learning</em> cycle — <strong>Consequences</strong> (pt. 2)</h2>
+<ul>
+<li>
+<p>Learning cycles are extremely <strong>expensive</strong> in terms of <em>money</em> and <em>computational resources</em>…</p>
+</li>
+<li>
+<p>… performed <strong>periodically</strong> (weeks? months?) to improve the <em>quality</em> of the service</p>
+<ul>
+<li>the <em>as-a-Service</em> consumption model gives the user transparent access to the <em>updated</em> service</li>
+</ul>
+</li>
+</ul>
+<span class="fragment ">
+  <h2></h2>
+<blockquote>
+<ul>
+<li><strong>Recent</strong> information may <u>not</u> have been <em>learned</em> yet</li>
+<li>There is a risk of receiving <strong>outdated</strong> or <em>incomplete</em> answers from GenAI</li>
+<li>GenAI gives the <em>impression</em> of learning <strong>during the conversation</strong>, but it actually does so <em>offline</em></li>
+</ul>
+</blockquote>
+</span>
+</section><section>
+<h2 id="some-technological-solutions-let-you-choose-pt-1">Some technological solutions let you <em>choose</em> (pt. 1)</h2>
+<img src="./logo-chatgpt.svg" alt="" style="height: 2em; max-width: 95vw; max-height: 80vh; object-fit: contain;">
+<br>
+<img src="./chatgpt-settings/no-learn-1.png" alt="" style="width: 100%; max-width: 95vw; max-height: 50vh; object-fit: contain;">
+</section><section>
+<h2 id="some-technological-solutions-let-you-choose-pt-2">Some technological solutions let you <em>choose</em> (pt. 2)</h2>
+<img src="./logo-chatgpt.svg" alt="" style="height: 2em; max-width: 95vw; max-height: 80vh; object-fit: contain;">
+<br>
+<img src="./chatgpt-settings/no-learn-2.png" alt="" style="width: 100%; max-width: 95vw; max-height: 50vh; object-fit: contain;">
+</section><section>
+<h2 id="some-technological-solutions-let-you-choose-pt-3">Some technological solutions let you <em>choose</em> (pt. 3)</h2>
+<img src="./logo-chatgpt.svg" alt="" style="height: 2em; max-width: 95vw; max-height: 80vh; object-fit: contain;">
+<br>
+<img src="./chatgpt-settings/no-learn-3.png" alt="" style="width: 100%; max-width: 95vw; max-height: 50vh; object-fit: contain;">
+</section><section>
+<h2 id="some-technological-solutions-let-you-choose-pt-4">Some technological solutions let you <em>choose</em> (pt. 4)</h2>
+<img src="./logo-chatgpt.svg" alt="" style="height: 2em; max-width: 95vw; max-height: 80vh; object-fit: contain;">
+<br>
+<img src="./chatgpt-settings/no-learn-4.png" alt="" style="width: 100%; max-width: 95vw; max-height: 50vh; object-fit: contain;">
+
+</section>
+</section>
+
+<section data-noprocess="" data-shortcode-slide="" id="interfaces">
+  
+<h1 id="main-technological-solutions">Main <strong>technological</strong> solutions</h1>
+<h2 id="categorized-by-type-of-interface">Categorized by type of <strong>interface</strong></h2>
+<ul>
+<li><em>Conversational</em>: e.g. <a href="https://chatgpt.com/">ChatGPT</a>, <a href="https://claude.ai/login?returnTo=%2F%3F">Claude</a>, <a href="https://scite.ai">Scite</a></li>
+<li><em>Auto-completion</em>: e.g. <a href="https://github.com/features/copilot">GitHub Copilot</a></li>
+<li><em>Programmatic</em>: e.g. <a href="https://openai.com/api/">OpenAI Platform</a>, <a href="https://huggingface.co/">Hugging Face</a></li>
+<li><em>In-App</em>: e.g. <a href="https://www.microsoft.com/it-it/microsoft-365/copilot?market=it">Microsoft 365 Copilot</a></li>
+<li><em>Audio/video editing</em>: e.g. <a href="https://suno.com/">Suno</a>, <a href="https://runwayml.com/">Runway</a></li>
+<li><em>Inspection of generated material</em>: e.g. <a href="https://gptzero.me/">GPTZero</a>, <a href="https://www.zerogpt.com/">ZeroGPT</a></li>
+</ul>
+<p><span style="color: red;">Non-exhaustive list!</span></p>
+</section><section>
+<h2 id="conversational-interface"><strong>Conversational</strong> interface</h2>
+
+<div class="container w-100 m-0 p-0">
+    <div class="row "><div class="col " style="text-align: left;"><img src="./logo-chatgpt.svg" alt="" style="height: 2em; max-width: 95vw; max-height: 80vh; object-fit: contain;">
+<a href="https://chatgpt.com/share/6798dd04-8a98-8008-a751-bc374318bd9e">
+<img src="./interface-conversational.png" alt="" style="width: 100%; max-width: 95vw; max-height: 80vh; object-fit: contain;">
+</a>
+</div>
+<div class="col " style="text-align: left;"><br>
+<ul>
+<li><em>Textual</em> interaction that mimics a (<strong>chat</strong>) <em>exchange</em>
+<ul>
+<li>the user asks, the AI responds <em>reactively</em></li>
+</ul>
+</li>
+<li>The interface allows entering a <strong>prompt</strong>
+<ul>
+<li>optionally including <em>attachments</em> (e.g. images, documents)</li>
+</ul>
+</li>
+<li>Responses are <strong>contextual</strong>
+<ul>
+<li>i.e., the conversation <em>history</em> affects <em>future</em> responses</li>
+</ul>
+</li>
+<li>The response contains <strong>text</strong> (often <em>formatted</em>)
+<ul>
+<li>optionally: <em>images</em>, URLs, code</li>
+</ul>
+</li>
+</ul>
+<span class="fragment ">
+  <h3 id="sometimes">Sometimes…</h3>
+<ul>
+<li>… before responding, the AI performs a <strong>Web</strong> <em>search</em></li>
+<li>important for obtaining <em>up-to-date</em> results</li>
+</ul>
+</span>
+</div>
+</div>
+</div>
+</section><section>
+<h2 id="auto-completion-interface"><strong>Auto-completion</strong> interface</h2>
+
+<div class="container w-100 m-0 p-0">
+    <div class="row "><div class="col " style="text-align: left;"><img src="./logo-copilot.svg" alt="" style="height: 2em; max-width: 95vw; max-height: 80vh; object-fit: contain;">
+<img src="./interface-autocompletion.gif" alt="" style="width: 100%; max-width: 95vw; max-height: 80vh; object-fit: contain;">
+</div>
+<div class="col " style="text-align: left;"><br>
+<ul>
+<li>The AI <em>suggests</em> a <strong>completion</strong> for the entered text
+<ul>
+<li>e.g., code, text, URLs</li>
+</ul>
+</li>
+<li>The user <strong>accepts</strong> (even partially) or <em>ignores</em> the suggestion</li>
+<li>Used especially for <strong>programming</strong> <em>code</em></li>
+</ul>
+<span class="fragment ">
+  <h3 id="attention">Attention…</h3>
+<ul>
+<li>… <strong>subscription</strong> pricing model (see <a href="https://github.com/features/copilot/plans">here</a>)</li>
+<li>… potential <strong>leaks</strong> of <em>sensitive</em> information</li>
+<li>… non-negligible <strong>lock-in</strong> risk</li>
+</ul>
+</span>
+</div>
+</div>
+</div>
+</section><section>
+<h2 id="programmatic-interface"><strong>Programmatic</strong> interface</h2>
+
+<div class="container w-100 m-0 p-0">
+    <div class="row "><div class="col col-6" style="text-align: left;"><img src="./logo-openai.svg" alt="" style="height: 2em; max-width: 95vw; max-height: 80vh; object-fit: contain;">
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">import</span> <span style="color:#000">asyncio</span>
+</span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">from</span> <span style="color:#000">openai</span> <span style="color:#204a87;font-weight:bold">import</span> <span style="color:#000">AsyncOpenAI</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000">client</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#000">AsyncOpenAI</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">api_key</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#4e9a06">"sk-1234567890abcdef1234567890abcdef"</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">async</span> <span style="color:#204a87;font-weight:bold">def</span> <span style="color:#000">main</span><span style="color:#000;font-weight:bold">():</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000">stream</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#204a87;font-weight:bold">await</span> <span style="color:#000">client</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">chat</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">completions</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">create</span><span style="color:#000;font-weight:bold">(</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000">model</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#4e9a06">"gpt-4"</span><span style="color:#000;font-weight:bold">,</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000">messages</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#000;font-weight:bold">[</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#204a87">dict</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">role</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#4e9a06">"user"</span><span style="color:#000;font-weight:bold">,</span>
+</span></span><span style="display:flex;"><span>                 <span style="color:#000">content</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#4e9a06">"European countries, one by line"</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">],</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000">stream</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#204a87;font-weight:bold">True</span><span style="color:#000;font-weight:bold">,</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#204a87;font-weight:bold">async</span> <span style="color:#204a87;font-weight:bold">for</span> <span style="color:#000">chunk</span> <span style="color:#204a87;font-weight:bold">in</span> <span style="color:#000">stream</span><span style="color:#000;font-weight:bold">:</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#204a87">print</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">chunk</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">choices</span><span style="color:#000;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0</span><span style="color:#000;font-weight:bold">]</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">delta</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">content</span> <span style="color:#204a87;font-weight:bold">or</span> <span style="color:#4e9a06">""</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">end</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#4e9a06">", "</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000">asyncio</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">run</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">main</span><span style="color:#000;font-weight:bold">())</span>
+</span></span></code></pre></div><p>Output:</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span>Albania, Andorra, Austria, Belarus, Belgium, Bosnia and Herzegovina, Bulgaria, Croatia, Cyprus, Czech Republic, Denmark, Estonia, Finland, France, Germany, Greece, Hungary, Iceland, Ireland, Italy, Kosovo, Latvia, Liechtenstein, Lithuania, Luxembourg, Malta, Moldova, Monaco, Montenegro, Netherlands, North Macedonia, Norway, Poland, Portugal, Romania, Russia, San Marino, Serbia, Slovakia, Slovenia, Spain, Sweden, Switzerland, Turkey, Ukraine, United Kingdom, Vatican City (Holy See),
+</span></span></code></pre></div></div>
+<div class="col " style="text-align: left;"><ul>
+<li>
+<p><strong>Programming language</strong> interacting with AI</p>
+<ul>
+<li>e.g., <em>Python</em>, JavaScript</li>
+</ul>
+</li>
+<li>
+<p>The interaction remains of the <em>request-response</em> type</p>
+<ul>
+<li>the <strong>program</strong> sends a <em>request</em>, the AI <em>responds</em></li>
+</ul>
+</li>
+</ul>
+<span class="fragment ">
+  <h3 id="enables">Enables</h3>
+<ul>
+<li>
+<p><strong>Parametric</strong> prompts, responses processed <em>automatically</em></p>
+<ul>
+<li>e.g. <code>list of LOCALITIES in AREA, one by line</code>
+<ul>
+<li>where <code>LOCALITIES</code> $\in$ {<code>cities</code>, <code>regions</code>, <code>states</code>}</li>
+<li>and <code>AREA</code> $\in$ {<code>Europe</code>, <code>Asia</code>, <code>Africa</code>, <code>America</code>, <code>Oceania</code>}</li>
+<li>results <em>sorted alphabetically</em></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>Writing <strong>software</strong> that uses AI as a <strong>service</strong></p>
+<ul>
+<li>useful in both <em>industry</em> and <em>research</em></li>
+</ul>
+</li>
+</ul>
+</span>
+<span class="fragment ">
+  <h3 id="attention">Attention…</h3>
+<ul>
+<li>… <strong>usage-based</strong> pricing model (see <a href="https://openai.com/api/pricing/">here</a>)
+<ul>
+<li>proportional to the number of processed <em>tokens</em></li>
+<li>prices vary <em>by model</em></li>
+</ul>
+</li>
+</ul>
+</span>
+</div>
+</div>
+</div>
+</section><section>
+<h2 id="in-app-interface"><strong>In-app</strong> interface</h2>
+
+<div class="container w-100 m-0 p-0">
+    <div class="row "><div class="col " style="text-align: left;"><img src="./logo-copilot-office.svg" alt="" style="height: 2em; max-width: 95vw; max-height: 80vh; object-fit: contain;">
+<img src="./interface-inapp.gif" alt="" style="width: 100%; max-width: 95vw; max-height: 80vh; object-fit: contain;">
+</div>
+<div class="col " style="text-align: left;"><br>
+<ul>
+<li>
+<p>GenAI integrated into <strong>desktop</strong> or <em>web</em> <strong>applications</strong></p>
+<ul>
+<li>e.g., <em>Microsoft Office</em> (Word, Excel, Outlook)</li>
+</ul>
+</li>
+<li>
+<p>support for an internal <strong>conversational</strong> interface</p>
+<ul>
+<li>a conversation that is intrinsically <em>contextualized</em></li>
+</ul>
+</li>
+<li>
+<p>AI <strong>automates</strong> <em>complex operations</em> (within the app)</p>
+<ul>
+<li>e.g., draft <em>writing</em></li>
+<li>e.g., <em>generation</em> of formulas, charts</li>
+</ul>
+</li>
+</ul>
+<span class="fragment ">
+  <h3 id="attention">Attention…</h3>
+<ul>
+<li>… <strong>subscription</strong> pricing model (see <a href="https://www.microsoft.com/it-it/microsoft-365/copilot?market=it#plans">here</a>)</li>
+<li>… potential <strong>leaks</strong> of <em>sensitive</em> information</li>
+<li>… non-negligible <strong>lock-in</strong> risk</li>
+</ul>
+</span>
+</div>
+</div>
+</div>
+</section><section>
+<h2 id="interface-for-editing-audiovideo-content-eg-music">Interface for <strong>editing</strong> audio/video content (e.g. <em>music</em>)</h2>
+
+<div class="container w-100 m-0 p-0">
+    <div class="row "><div class="col " style="text-align: left;"><img src="./logo-suno.svg" alt="" style="height: 2em; max-width: 95vw; max-height: 80vh; object-fit: contain;">
+<img src="./generate-song-1.png" alt="" style="width: 100%; max-width: 95vw; max-height: 80vh; object-fit: contain;">
+</div>
+<div class="col " style="text-align: left;"><ul>
+<li>
+<p><strong>One-shot</strong> interaction to generate content</p>
+<ul>
+<li><em>input</em>: textual description of the content</li>
+<li><em>output</em>: content</li>
+</ul>
+</li>
+<li>
+<p>The interface then allows</p>
+<ul>
+<li><em>playback</em> of the content</li>
+<li><strong>editing</strong> of the content
+<ul>
+<li>e.g., <em>cutting</em> parts, <em>changing</em> key</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<span class="fragment ">
+  <h3 id="example">Example</h3>
+<ul>
+<li><a href="https://it.wikipedia.org/wiki/Il_trionfo_di_Bacco_e_Arianna_(poesia)">“Song of Bacchus” (Lorenzo de’ Medici, 1490)</a>, rock
+<ul>
+<li><a href="https://suno.com/song/cce33ee7-a581-47ae-b9d1-806902e88e47">https://suno.com/song/cce33ee7-a581-47ae-b9d1-806902e88e47</a></li>
+</ul>
+</li>
+</ul>
+</span>
+</div>
+</div>
+</div>
+</section>
+
+<section data-noprocess="" data-shortcode-slide="" id="modes">
+  
+<h1 id="main-usage-modes">Main <strong>usage modes</strong></h1>
+<h2 id="categorized-by-genai-role">Categorized by GenAI <strong>role</strong></h2>
+<h3 id="genai-as">GenAI as…</h3>
+<ul>
+<li>… a <em>search engine</em>: user is <strong>searching for</strong> information</li>
+<li>… a <em>(re)writing</em> assistant: user is <strong>writing</strong> documents</li>
+<li>… a reading assistant: user is <strong>extracting information</strong> from documents</li>
+<li>… a data-processing assistant: user is <strong>processing</strong> data</li>
+<li>… a content generator: user is <strong>creating</strong> content</li>
+</ul>
+<p><span style="color: red;">Non-exhaustive list!</span></p>
 </section><section>
 <h1 id="lecture-is-over">Lecture is Over</h1>
 <br>
