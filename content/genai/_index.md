@@ -74,13 +74,13 @@ _AI_ algorithms capable of __automatically generating__ _content_, e.g.:
 > <br> (thus __making mistakes__ like humans do)
 - $\implies$ LLMs can be very confident in themselves, while saying _incorrect_, _imprecise_, or _made-up_ things
 
-- better would be to combine LLMs with __symbolic__ AI tools, to get the best of both worlds 
+- better would be to combine LLMs with __symbolic__ AI tools, to get the best of both worlds
 
 ---
 
-## Analogy with Dual-system theory 
+## Analogy with Dual-System theory
 
-{{< image src="./dual-system.png" width="100%" max-h="70vh" alt="Dual-system theory concept">}}
+{{< image src="./dual-system.png" width="100%" max-h="90vh" alt="Dual-system theory concept">}}
 
 (cf. [Thinking, Fast and Slow](https://en.wikipedia.org/wiki/Thinking,_Fast_and_Slow))
 
@@ -408,21 +408,192 @@ Albania, Andorra, Austria, Belarus, Belgium, Bosnia and Herzegovina, Bulgaria, C
 
 ---
 
-{{< slide id="modes" >}}
+## What do engineers do with GenAI?
 
-# Main __usage modes__
+Combine _prompts_, _tools_, _vector stores_, and _agents_ to constrain and govern the behavior of __pre-trained__ (_foundation_) models, in order to:
+- __generate__ contents (text, images, code, etc.) for a specific purpose
+    * e.g. bring unstructured data into a particular format
+    * e.g. produce summaries, reports, highlights
+- __interpret__ unstructured data and _grasp information_ from it
+    * e.g. extract entities, relations, sentiments
+    * e.g. answer questions about a document
+- __automate__ data-processing tasks which are _hard to code_ explicitly
+    * e.g. the task is ill-defined (`write an evaluation paragraph for each student's work`)
+    * e.g. the task requires mining information from unstructured data (`find the parties involved in this contract`)
+    * e.g. the task is complex yet too narrow to allow for general purpose coding (`plan a vacation itinerary based on user preferences`)
+- __interact__ with users via _natural language_
+    * e.g. chatbots, virtual assistants
 
-## Categorized by GenAI __role__
+---
 
-### GenAI as...
+## Let's explain the nomenclature
 
-* ... a _search engine_: user is __searching for__ information
-* ... a _(re)writing_ assistant: user is __writing__ documents
-* ... a reading assistant: user is __extracting information__ from documents
-* ... a data-processing assistant: user is __processing__ data
-* ... a content generator: user is __creating__ content
+- __<u>Pre-trained</u> foundation models__ (PFM): large neural-networks trained on massive datasets to learn general skills (e.g. 'understanding' and generating text, images, code), most commonly accessed -as-a-Service- via API, as provided by third-party companies
+    * e.g. GPT, PaLM, LLaMA, etc.
 
-{{% color "red" %}}Non-exhaustive list!{{% /color %}}
+- __Prompts__: carefully _crafted textual inputs_ that guide some PFM to produce _desired outputs_
+    * prompt __templates__ are prompts with _named placeholders_ to be filled with specific data at runtime
+        + e.g. `Write a summary of the following article: {article_text}`
+
+- __Tools__: external _software components_ (e.g. WebAPIs, databases, search engines) that can be _invoked_ by PFMs to perform specific tasks or retrieve information
+    * e.g. a calculator API, a weather API, a database query interface
+
+- __Vector stores__: specialized databases that store and retrieve _high-dimensional vectors_ (embeddings) for the sake of _information retrieval_ via _similarity search_
+    * e.g. to support _retrieval-augmented generation_ (RAG)
+
+- __Agents__: software systems that _orchestrate_ the interaction between PFMs and tools, enabling dynamic decision-making and task execution based on the context and user input
+    * e.g. a chatbot that uses a PFM for conversation and invokes a weather API when asked about the weather
+    * e.g. an assistant that uses a PFM to understand user requests and a database to fetch relevant information
+
+---
+
+{{% section %}}
+
+## What does an AI-powered application include?
+
+0. FM are commonly <u>not</u> produced in-house, but rather _accessed_ via APIs... yet the choice of __what model(s) to use__ is crucial
+    * must be available, configured, and most commonly imply _costs_ (per call, per token, etc.)
+    * imply the choice of some __client library__, and the related _programmatic interface_
+        + e.g. [OpenAI Python SDK](https://github.com/openai/openai-python), [Hugging Face Transformers](https://huggingface.co/docs/transformers/index), etc.
+
+1. A set of __prompt templates__ (text files, or code snippets) that are known to work well for the tasks at hand
+    * commonly assessed via semi-automatic _evaluations_ on a _validation set_ of inputs
+
+2. A set of __tool servers__ implementing the [MCP protocol](https://modelcontextprotocol.io/docs/getting-started/intro) so that tools can be _invoked_ by PFMs
+    * these are _software modules_, somewhat similar to ordinary Web services, offering one endpoint per tool
+
+3. A set of __agents__, implementing the logic to orchestrate the interaction between PFMs and tools
+    * these are _software modules_, commonly implemented via libraries such as [LangChain](https://python.langchain.com/en/latest/index.html) or [LlamaIndex](https://gpt-index.readthedocs.io/en/latest/)
+
+4. A set of __vector stores__ (if needed), populated with relevant data, and accessible by the agents
+    * there are _software modules_, somewhat similar to ordinary DBMS, offering CRUD operations on data chunks _indexed by_ their _embeddings_
+
+5. LLM-as-a-Judge __evaluations__ to assess the quality of the outputs produced by the system, and to guide the improvement of prompts, tools, and agents
+    * e.g. by comparing the output to a _reference_ answer, and by assigning a score based on some _criterion_
+
+---
+
+## Concept: Prompt Templates
+
+![](./prompt-templates.jpg)
+
+---
+
+## Concept: Agents Calling External Tools
+
+![](./tools.png)
+
+---
+
+## Concept: Model-Context Protocol (MCP)
+
+<!-- ![](./mcp.png) -->
+{{< image src="./mcp.png" width="100%" max-h="70vh" alt="Model-Context Protocol (MCP) concept">}}
+
+- MCP $\approx$ _standard_ protocol for LLM-based agents to _call_ __external tools__
+- Allow for _decoupling_ between the agent's logic and the implementation of the tools, thus enabling modularity and interoperability
+- Most commonly there is a __server__ (a.k.a. _gateway_) where tools are registered (names, purpose, data schemas, etc.)
+- Clients are agents willing to _discover_ or _invoke_ tools provided by some server
+
+---
+
+## Concept: Retrieval-Augmented Generation (RAG)
+
+![](./rag.png)
+
+---
+
+## Concept: LLM-as-a-Judge
+
+<!-- ![](./llm-as-a-judge.png) -->
+{{< image src="./llm-as-a-judge.png" width="100%" max-h="70vh" alt="LLM-as-a-Judge concept">}}
+
+- Exploiting an LLM to _evaluate_ the quality of some other LLM's output...
+- ... based on some _informal_ __criterion__ (e.g. _relevance_, _accuracy_, _completeness_, etc.)
+- ... by comparing the output to some _reference_ (e.g. a human-written checklist)
+
+{{% /section %}}
+
+---
+
+{{% section %}}
+
+## The GenAI workflow
+
+(Similar to the ML workflow in the sense that the goal is to process data, but different in many details e.g. _no training_ is involved)
+
+![](./genai-workflow.png)
+
+* there could be __many iterations__ (e.g. for PFM selection, and prompt tuning)
+* the whole workflow may be __re-started__ upon _data changes_, or _task changes_, or new _PFM availability_
+* the __interplay__ between prompts, models, tasks, and data may need to be _monitored_ and _adjusted_ continuously
+* the __data-flow__ between components (agents, PFM, tools, vector stores) may need to be _tracked_ for the sake of _debugging_ and _monitoring_
+
+---
+
+## Peculiar activities in a typical GenAI workflow
+
+1. __Foundation model selection__: choose the most suitable pre-trained model(s) based on task requirements, performance, cost, data protection, and availability
+    * implies trying out prompts (even manually) on different models
+
+2. __Prompt engineering__: design, test, and refine prompt templates to elicit the desired responses
+    * implies engineering variables, lengths, formats, contents, etc
+
+3. __Evaluations__: establish assertions and metrics to assess PFM responses to prompts (attained by instantiating templates over actual data)
+    * somewhat similar to _unit tests_ in ordinary software
+    * important when automatic, as they allow quick evaluations on prompt/model combinations
+
+4. __Tracking__ the _data-flow_ between components (agents, PFM, tools, vector stores) to monitor _costs_, _latency_, and to _debug_ unexpected behaviors
+    * also useful for the sake of _auditing_ and _governance_
+    * commonly performed via _logging_ and _tracing_ tools, e.g. [LangSmith](https://smith.langchain.com/), or [MLflow](https://mlflow.org/)
+
+---
+
+## Example of GenAI workflow (pt. 1)
+
+> Support public officers in managing tenders through a GenAI assistant that understands and compares procurement decisions transparently.
+
+1. __Problem Framing__:
+    - _Content Generation_: draft and justify _comparisons_ among suppliers’ offers vs. technical specs
+    - _Interpretation_: understand regulatory documents and technical language
+    - _Automation_: retrieve relevant laws, norms, and prior tender examples
+    - _Interaction_: enable officers to query and validate results through natural language
+
+2. __Data Collection__: past tenders' technical specifications, acts, etc; regulatory documents, etc.
+
+3. __Data Preparation__:
+    - devise useful data schema & extract relevant data from documents
+    - anonymize sensitive info (suppliers, personal data)
+    - segment documents and index by topic (law, SLA, price table, etc.)
+
+---
+
+## Example of GenAI workflow (pt. 2)
+
+4. __Prompt Engineering__:
+    1. design prompt templates for comparison, justification, and Q&A
+        * use role-based system prompts (`You are a procurement evaluator…`)
+    2. allocate placeholders for RAG-retrieved data chunks
+    3. iterate on template design based on manual tests
+
+5. __Foundation Model Selection__: multi-lingual? specialized in legal/technical text? cost constraints? support for tools?
+
+6. __Vector stores__: storing embeddings for tender documents & specs, legal texts & guidelines, previous evaluation, templates
+    1. choose embedding model, chunking strategy, and populate vector store
+    2. engineer retrieval strategies to fetch relevant chunks
+
+8. __Tools__:
+    * regulation lookup API + tender database query API
+    * report generation out of document templates
+    * automate scoring calculations via spreadsheet or Python scripts generation
+
+9. __Agents__:
+    1. exploit LLM to extract structured check-lists out of technical specs
+    2. orchestrate RAG, tool invocations, and prompt templates to score each offer
+    3. generate comparison reports
+    4. ...
+
+{{% /section %}}
 
 ---
 
