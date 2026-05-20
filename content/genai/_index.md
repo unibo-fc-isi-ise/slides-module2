@@ -45,6 +45,47 @@ _AI_ algorithms capable of __automatically generating__ _content_, e.g.:
 
 ---
 
+## Basic Operation of LLMs
+
+<!-- ![Next word prediction](./next-word-prediction.png) -->
+{{< image src="./next-word-prediction.png" width="100%" max-h="70vh" alt="Next word prediction concept">}}
+
+- LLMs have learned to __predict__ the _next word_ in a _text_ given the _previous context_
+    * similar to the _predictive_ keyboard on mobile phones, but much more _complex_ and _powerful_
+- In other words, LLMs have learned how to use __natural language__
+- Foundation models can combine input/output text with other modalities (e.g. images, audio, video)
+    * e.g. accepting text + image as input, and producing text + image as output, or any combination of these modalities
+- This makes them very good at dealing with __unstructured__ data, either in input or output
+
+---
+
+## Language and Reasoning
+
+- __Natural language__ helps people _communicate_
+
+- It can be used to express _complex_ or _abstract_ concepts
+
+- It can be used to _reason_ about _problems_ and _solutions_
+    - however it admits __imprecisions__, due to _ambiguity_, variable interpretations, subjectivity, etc.
+
+
+
+> Natural language allows LLMs to use __intuition__ in _reasoning_, like humans do
+> <br> (thus __making mistakes__ like humans do)
+- $\implies$ LLMs can be very confident in themselves, while saying _incorrect_, _imprecise_, or _made-up_ things
+
+- better would be to combine LLMs with __symbolic__ AI tools, to get the best of both worlds 
+
+---
+
+## Analogy with Dual-system theory 
+
+{{< image src="./dual-system.png" width="100%" max-h="70vh" alt="Dual-system theory concept">}}
+
+(cf. [Thinking, Fast and Slow](https://en.wikipedia.org/wiki/Thinking,_Fast_and_Slow))
+
+---
+
 {{% section %}}
 
 ## GenAI with an _as-a-Service_ consumption model
