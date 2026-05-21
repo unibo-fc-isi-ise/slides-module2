@@ -1,8 +1,7 @@
 <!DOCTYPE html><html lang="en"><head>
-	<meta name="generator" content="Hugo 0.155.3">
     <meta charset="utf-8">
-<title>About the course</title>
-<meta name="description" content="Presentation of the course 'Intelligent Systems Engineering — Module 2'">
+<title>[ISE] LLM-as-a-Service</title>
+<meta name="description" content="Background about using LLMs via Service Providers">
 
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -25,70 +24,62 @@
       <div class="slides">
   
 
-    <section><h1 id="hahahugoshortcode1s0hbhb">Intelligent Systems Engineering — Module 2</h1>
-<h2 id="hahahugoshortcode1s1hbhb">A.Y. 2025/2026</h2>
+    <section><h1 id="using-llms-via-service-providers">Using LLMs via Service Providers</h1>
 <br>
-<h3 id="prof-hahahugoshortcode1s2hbhb">Prof. <a href="mailto:giovanni.ciatto@unibo.it">Giovanni Ciatto</a></h3>
+<h2 id="hahahugoshortcode1s0hbhb">Intelligent Systems Engineering — Module 2</h2>
+<h3 id="hahahugoshortcode1s1hbhb">A.Y. 2025/2026</h3>
+<h3 id="hahahugoshortcode1s2hbhb"><a href="mailto:giovanni.ciatto@unibo.it">Giovanni Ciatto</a></h3>
+<br>
 <br>
 <p>Compiled on: 2026-05-21
  — <a href="?print-pdf&amp;pdfSeparateFragments=false"><i class="fa fa-print" aria-hidden="true"></i> printable version</a></p>
-<!-- [<i class="fa fa-undo" aria-hidden="true"></i> back](..) -->
-</section>
-
-<section data-noprocess="" data-shortcode-slide="" id="toc">
-  
-<h2 id="table-of-contents">Table of Contents</h2>
-<ol>
-<li><a href="https://github.com/unibo-fc-isi-ise/lecture-about/releases/download/3.0.0/ise-lab-about.pdf">About the Lab</a></li>
-<li><a href="https://github.com/unibo-fc-isi-ise/lecture-jason/releases/download/0.2.1-5-g105ae3b/ise-lab-jason.pdf">Programming Intentional Agents: Exercises in Jason</a></li>
-<li><a href="https://github.com/unibo-fc-isi-ise/lecture-strips/releases/download/0.1.0-2025-05-13T114833/ise-lab-strips.pdf">Planning with STRIPS</a></li>
-<li>Agentic AI
-<ol>
-<li><a href="genai">Generative AI 101</a></li>
-</ol>
-</li>
-</ol>
+<p><a href="../#/toc"><i class="fa fa-undo" aria-hidden="true"></i> back to ToC</a></p>
 </section><section>
-<h2 id="teachers">Teachers</h2>
-<h3 id="prof-giovanni-ciatto">Prof. Giovanni Ciatto</h3>
+<h2 id="outiline">Outiline</h2>
+<h3 id="key-engineering-aspects-of-llm-as-a-service">Key engineering aspects of LLM-as-a-Service</h3>
+<ol start="0">
+<li>
+<p><strong>On-premise</strong> vs. <strong>On-cloud</strong> deployment</p>
 <ul>
-<li>email: <a href="mailto:giovanni.ciatto@unibo.it"><code>giovanni.ciatto@unibo.it</code></a></li>
-<li>homepage: <a href="https://www.unibo.it/sitoweb/giovanni.ciatto/en">https://www.unibo.it/sitoweb/giovanni.ciatto/en</a></li>
-<li>office hours: by appointment (send me an email)</li>
-</ul>
-</section><section>
-<h2 id="prioritize-the-hahahugoshortcode1s2hbhb">Prioritize the <a href="https://virtuale.unibo.it/mod/forum/view.php?id=2263029">General forum</a></h2>
+<li>On-premise: the model is hosted and run on the <em>user’s own infrastructure</em>, commonly via <em>containerized solutions</em> (e.g. <a href="https://ollama.com/">Ollama</a>, <a href="https://www.docker.com/products/model-runner/">Docker’s Model Runner</a>, etc.)
 <ul>
-<li>All technical question</li>
-<li>Any other non-personal question</li>
-</ul>
-<p>
-</p><h2 id="when-using-the-email">When using the email</h2>
-<ul>
-<li>Include <em>all</em> teachers in CC, <strong>always</strong>, there including prof. <a href="mailto:andrea.omicini@unibo.it">Omicini</a></li>
-<li>Clarify the <em>academic year</em> and the <em>name of the course</em> in the subject</li>
-</ul>
-</section>
-
-<section data-noprocess="" data-shortcode-slide="" id="links">
-  
-<h2 id="pages-of-the-course">Pages of the course</h2>
-<ul>
-<li><a href="https://www.unibo.it/it/studiare/insegnamenti-competenze-trasversali-moocs/insegnamenti/insegnamento/2025/455810">Institutional Page of the Course</a></li>
-<li><a href="https://virtuale.unibo.it/course/view.php?id=68871">Virtuale Page of the Course</a>
-<ul>
-<li>please enroll if you didn’t already</li>
+<li>implies ad-hoc <em>hardware requirements</em> (e.g. Nvidia GPUs, Apple Silicon) and technical expertise for setup and maintenance</li>
+<li>the service provider is commonly the company providing the <em>containerized solution</em>, and making <em>models</em> available for <em>download</em> and use</li>
+<li>most commonly, containerized solutions provide the same <em>API</em> as the on-cloud service, to facilitate migration between the two deployment options</li>
 </ul>
 </li>
-<li><a href="https://apice.unibo.it/xwiki/bin/view/Course/Ise2526/">APICe Page of the Course</a></li>
-<li><a href="./">These slides</a></li>
+<li>On-cloud: the model is hosted and run on the <em>service provider’s infrastructure</em>, and accessed via <em>API calls</em>
+<ul>
+<li>implies <em><u>no</u> hardware requirements</em> for the user, but a <em>cost per usage</em> (e.g. per token, per request, etc.)</li>
 </ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Service Provider</strong>: several exist, with different offerings in terms of models, pricing, and features (e.g. <a href="https://openai.com/">OpenAI</a>, <a href="https://www.anthropic.com/">Anthropic</a>, <a href="https://cloud.google.com/vertex-ai">Google</a>, <a href="https://azure.microsoft.com/en-us/services/cognitive-services/">Microsoft</a>, etc.)</p>
+<ul>
+<li>the choice of the service provider can depend on several factors, including:
+<ul>
+<li>the availability of <em>specific models</em> (e.g. GPT-4, Claude, Gemini, etc.)</li>
+<li>the <em>pricing model</em> and cost structure</li>
+<li>the <em>features</em> and <em>capabilities</em> offered (e.g. fine-tuning, custom models, MCP support, etc.)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>HTTP API “Type”</strong></p>
+</li>
+<li>
+<p><strong>Client Library</strong></p>
+</li>
+</ol>
 </section><section>
 <h1 id="lecture-is-over">Lecture is Over</h1>
 <br>
 <p>Compiled on: 2026-05-21
  — <a href="?print-pdf&amp;pdfSeparateFragments=false"><i class="fa fa-print" aria-hidden="true"></i> printable version</a></p>
-<p><a href="./#/toc"><i class="fa fa-undo" aria-hidden="true"></i> back to ToC</a></p>
+<p><a href="../#/toc"><i class="fa fa-undo" aria-hidden="true"></i> back to ToC</a></p>
 </section>
 
   
