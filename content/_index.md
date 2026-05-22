@@ -23,7 +23,7 @@ aliases = [
 3. [Planning with STRIPS](https://github.com/unibo-fc-isi-ise/lecture-strips/releases/download/0.1.0-2025-05-13T114833/ise-lab-strips.pdf)
 4. Agentic AI
     1. [Generative AI 101](genai)
-    
+    2. [LLM-as-a-Service](llmaas)
 
 ---
 
