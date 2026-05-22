@@ -45,9 +45,23 @@ outputs = ["Reveal"]
 
 {{% section %}}
 
-## On-premise Example with Ollama pt. 1
+## About Ollama (cf. <https://ollama.com/>)
 
-(cf. <https://ollama.com/>)
+- Ollama is a company that provides a _containerized_ solution for _hosting_ and _running_ LLMs __on-premise__, with a focus on ease of use and accessibility
+
+- It offers a [model zoo](https://ollama.com/models) with several pre-trained models available for _download_ and use
+    + plus a _native API_ that is _partially compatible_ with OpenAI's API, to facilitate migration between on-premise and on-cloud deployments
+
+- Ollama's solutions can be used on various __hardware__ & __OS configurations__, including _Nvidia_ GPUs and _Apple Silicon_ as well as _Linux_, _MacOS_, and _Windows_
+
+- Ollama's API supports both a native __CLI conversational interface__ and a __Web API__ for programmatic access, making it versatile for different use cases and user preferences
+
+- Ollama may also be used an [on-cloud service](https://ollama.com/pricing), but here we will focus on the on-premise deployment option alone
+    + three levels of premiumships (0€/month, 20€/month, 100€/month) with widening rate limitations
+
+---
+
+## On-premise Example with Ollama pt. 1
 
 0. Ensure you have the __required hardware__ (e.g. Nvidia GPU, Apple Silicon, etc.)
     + details and configuration caveats: <https://docs.ollama.com/gpu>
@@ -169,7 +183,50 @@ outputs = ["Reveal"]
 
 ---
 
-## On-cloud Example with Open Router
+{{% section %}}
+
+## About Open Router (cf. <https://openrouter.ai/>), pt. 1
+
+- Open Router (_OR_) is a company that provides an __on-cloud__ service for using _LLMs as services_, with a focus on _provider interchangeability_
+
+- Its distinguishing feature is that it acts as an _aggregator_ of multiple service providers, allowing users to access a variety of models from different providers via a single API, and helping to avoid vendor lock-in
+    + one can use OR for __free__, with _very limited rates_ (20 requests per minute, max 50 per day) 
+        * one may __buy credits__ to widen the limitations for free models (see <https://openrouter.ai/docs/api/reference/limits> for details), or to use _pay-per-use_ models
+
+- Pretty rich [model zoo](https://openrouter.ai/models), exposing models from <u>many</u> different providers, most notably: OpenAI, Anthropic, Google, xAI, Mistral, etc.
+    + notice that models come with __price-per-token__, commonly expressed a `$/1M tokens` (some times the prices is different for _input_ or _output_ tokens)
+        * this is very common for on-cloud services, and it is the main reason why we need to be careful when experimenting with them, to avoid unexpected costs
+
+    {{< image src="open-router-models.png" alt="Open Router's Model Zoo" max-h="40vh" >}}
+
+---
+
+## About Open Router (cf. <https://openrouter.ai/>), pt. 2
+
+- Models in OR's zoo are __named__ according to the following convention: `provider/model` followed by _optional_ `:tier`, where:
+    + `provider` is the name of the service provider (e.g. `openai`, `qwen`, `google`, etc.)
+    + `model` is the name of the model _variant_ as provided by the provider (e.g. `gpt-oss-120b`, `qwen3-coder`, `gemma-4-26b-a4b-it`, etc.)
+    + `tier` is an optional suffix that denotes a specific variant of the model (most commonly `free` for free models)
+
+
+- To allow for __dynamic routing__ of requests to different providers in a _transparent_ way, OR allows for the following meta-models:
+    + `openrouter/auto` ([AutoRouter](https://openrouter.ai/openrouter/auto)): let OR decide which provider/model to use for each request, based on the request's content and the current availability of models
+    + `provider/*` (e.g. `anthropic/*`, `google/*`, etc.): OR will serve each request with the best available model from the specified provider, according to the request's content and the current availability of models
+    + in general, you can reason like with Unix globs, so for instance `openai/gpt*` will match any OpenAI model whose name starts with `gpt` (as currently provided by OR)
+    + in the [routing settings](https://openrouter.ai/workspaces/default/routing) of your OR account, you can set up the __routing strategy__ OR should adopt:
+        1. __"Price"__ (cost-first): OR will route requests to the currently _cheapest_ model that can serve them
+        2. __"Latency"__: OR will route requests to the model that is _currently quicker_ to respond
+        3. __"Throughput"__: OR will route requests to the one that has currently the best stats in terms of _throughput_ (requests per minute)
+        4. __"Exacto"__ (quality-first): OR will route requests to the _best available_ model that can serve them (based on model's stats on tools usage)
+
+- __Bring your own API key__ (BYOK): OR allows you to _link_ your account with your API keys from _other providers_ so that you can use OR's API to access models from those providers, and therefore be charged according to the prices of those providers instead of OR's prices
+    + this is a great feature to avoid vendor lock-in, and to have more control over the costs and the models you want to use
+
+> Dynamic routing and BYOK are _peculiar_ features of OR, for the rest it's an "ordinary" on-cloud provider
+
+---
+
+## On-cloud Example with Open Router (pt. 1)
 
 1. __Sign up__ & _log in_ for an account on Open Router: <https://openrouter.ai>
     + easier to re-use your GitHub account
@@ -177,6 +234,102 @@ outputs = ["Reveal"]
 2. Optionally add __payment methods__ and _credits_ to your account in <https://openrouter.ai/settings/credits>
     + no credit needed for this lecture
     + recall to set _expense limitation_ to avoid unexpected costs, in case you decide to experiment with actual money
+
+    {{< image src="open-router-credits.png" alt="Open Router's Credits Settings" max-h="40vh" >}}
+
+---
+
+## On-cloud Example with Open Router (pt. 2)
+
+3. From time to time, keep an eye on the __activity dashboard__ of your account, to check the usage and the costs of your requests: <https://openrouter.ai/activity>
+
+    {{< image src="open-router-activity.png" alt="Open Router's Activity Dashboard" max-h="40vh" >}}
+
+---
+
+## On-cloud Example with Open Router (pt. 3)
+
+4. To use OR's models programmatically, you need to create an __API key__ first (to be stored securely, and not shared with anyone else)
+    * (i.e. an _authentication token_ to let clients authenticate on your behalf) 
+    * you can do that for the _default workspace_ at <https://openrouter.ai/workspaces/default/keys>
+        + __workspaces__ are OR-wise _administration domains_, inside which configurations rules (e.g. routing rules, cost limits, etc.) apply
+
+    {{< image src="open-router-apikeys.png" alt="Open Router's API Keys Settings" max-h="40vh" >}}
+
+    + an API key is a string of the form: `sk-or-XXXXXXXXXXXXXXXXXXXXXXXX`: it is sufficient to <u>consume your credit</u> and to make requests on your behalf
+
+---
+
+## On-cloud Example with Open Router (pt. 4)
+
+5. You may test your API key with a simple `curl` request:
+
+    ```bash
+    curl -X POST "https://openrouter.ai/api/v1/chat/completions" \
+        -H "Content-Type: application/json" \
+        -H "Authorization: Bearer YOUR_API_KEY" \
+        -d '{"model": "openrouter/auto", "messages": [{"role": "user", "content": "What is the capital of France?"}]}'
+    ```
+
+    answer (converted in YAML for the sake of readability):
+
+    ```yaml
+    id: gen-1779447979-077vepCYJjlgJfXKnK2q
+    object: chat.completion
+    created: 1779447979
+    model: openai/gpt-5-nano-2025-08-07
+    provider: OpenAI
+    system_fingerprint: null
+    service_tier: default
+    choices:
+      - index: 0
+        logprobs: null
+        finish_reason: stop
+        native_finish_reason: completed
+        message:
+          role: assistant
+          content: Paris.
+          refusal: null
+          reasoning: '**Providing the capital of France**
+
+
+            The user asked a straightforward question: "What is the capital of France?"
+            The answer is simple: Paris. I should respond concisely. My best guess is
+            to confirm: "The capital of France is Paris." While adding context could be
+            fun, it’s not necessary since the user didn’t request it. If I wanted to be
+            helpful, I could mention that Paris is the largest city and home to famous
+            landmarks like the Eiffel Tower, but I’ll keep it brief.**Confirming details
+            on Paris**
+
+
+            I can keep my response short and straightforward. The user asked about the
+            capital of France, and I can simply say: "Paris." If I want to offer more,
+            I could say, "The capital of France is Paris." I think that covers it! But
+            if they are interested, I could mention I''m happy to share more details about
+            Paris if they''d like. For now, I’ll stick with the essential answer.'
+    usage:
+      prompt_tokens: 13
+      completion_tokens: 243
+      total_tokens: 256
+      cost: 9.785e-05
+      is_byok: false
+      prompt_tokens_details:
+        cached_tokens: 0
+        cache_write_tokens: 0
+        audio_tokens: 0
+        video_tokens: 0
+      cost_details:
+        upstream_inference_cost: 9.785e-05
+        upstream_inference_prompt_cost: 6.5e-07
+        upstream_inference_completions_cost: 9.72e-05
+      completion_tokens_details:
+        reasoning_tokens: 192
+        image_tokens: 0
+        audio_tokens: 0
+
+    ```
+
+{{% /section %}}
 
 
 ---
