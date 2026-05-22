@@ -24,14 +24,14 @@ outputs = ["Reveal"]
     - On-cloud: the model is hosted and run on the _service provider's infrastructure_, and accessed via _API calls_
         + implies _<u>no</u> hardware requirements_ for the user, but a _cost per usage_ (e.g. per token, per request, etc.)
 
-1. **Service Provider**: several exist, with different offerings in terms of models, pricing, and features 
+1. **Service Provider**: several exist, with different offerings in terms of models, pricing, and features
     - e.g. [OpenAI](https://openai.com/), [Anthropic](https://www.anthropic.com/), [Google](https://cloud.google.com/vertex-ai), [Microsoft](https://azure.microsoft.com/en-us/services/cognitive-services/), [Hugging Face](https://huggingface.co/inference-api), or aggregators like [OpenRouter](https://openrouter.ai/)
     - the choice of the service provider can depend on several factors, including:
         + the availability of _specific models_ (e.g. GPT-4, Claude, Gemini, etc.)
         + the _pricing model_ and cost structure
         + the _features_ and _capabilities_ offered (e.g. fine-tuning, custom models, MCP support, etc.)
 
-1. **Web API Compatibility**: early providers (e.g. OpenAI, Google, Amazon) invented _their own APIs_, similar in the spirit, but _different in syntax_
+1. **Web API Compatibility**: early providers (e.g. OpenAI, Google) invented _their own APIs_, similar in the spirit, but _different in syntax_
     - some later providers attempted to adopt the _same API_ as the _market leader_ (OpenAI), to facilitate adoption
         * others (e.g. HuggingFace) come with their own API, which may be more or less compatible with OpenAI's API
     - API compatibility is key for _provider interchangeability_, hence allowing migration and __avoiding vendor lock-in__
@@ -84,8 +84,8 @@ outputs = ["Reveal"]
 
 ## On-premise Example with Ollama pt. 2
 
-3. Have a look to Ollama's __model zoo__ on <https://ollama.com/models>, and __select__ some model you like among the many variants available 
-    * notice naming convention: `model:variant`, most commonly the variant denotes the size of the model 
+3. Have a look to Ollama's __model zoo__ on <https://ollama.com/models>, and __select__ some model you like among the many variants available
+    * notice naming convention: `model:variant`, most commonly the variant denotes the size of the model
 
     {{< image src="ollama-models.png" alt="Ollama's Model Zoo" max-h="70vh" >}}
     {{< image src="ollama-models-gemma4.png" alt="Available variants for a Model on Ollama's Model Zoo" max-h="70vh" >}}
@@ -107,18 +107,18 @@ outputs = ["Reveal"]
     ```
 
     example of conversation (notice that the model is also showing its _thinking process_):
-    
+
     ```text
     >>> ciao!
     Thinking...
     Thinking Process:
 
     1.  **Analyze the input:** The input is "ciao!". This is an informal Italian greeting, meaning "hello!".
-    2.  **Determine the appropriate response:** Since the user initiated a friendly greeting, the response 
+    2.  **Determine the appropriate response:** Since the user initiated a friendly greeting, the response
     should also be a greeting, ideally reciprocating the language or offering a friendly follow-up.
-    3.  **Formulate the response (in Italian):** The simplest and most common reply is "ciao" (hello/hi) or 
+    3.  **Formulate the response (in Italian):** The simplest and most common reply is "ciao" (hello/hi) or
     a slightly expanded version.
-    4.  **Add a standard conversational element (optional but good practice):** Asking how the user is doing 
+    4.  **Add a standard conversational element (optional but good practice):** Asking how the user is doing
     is polite. ("Come stai?" / "Come va?")
     5.  **Final selection:** A friendly, standard reply.
 
@@ -190,7 +190,7 @@ outputs = ["Reveal"]
 - Open Router (_OR_) is a company that provides an __on-cloud__ service for using _LLMs as services_, with a focus on _provider interchangeability_
 
 - Its distinguishing feature is that it acts as an _aggregator_ of multiple service providers, allowing users to access a variety of models from different providers via a single API, and helping to avoid vendor lock-in
-    + one can use OR for __free__, with _very limited rates_ (20 requests per minute, max 50 per day) 
+    + one can use OR for __free__, with _very limited rates_ (20 requests per minute, max 50 per day)
         * one may __buy credits__ to widen the limitations for free models (see <https://openrouter.ai/docs/api/reference/limits> for details), or to use _pay-per-use_ models
 
 - Pretty rich [model zoo](https://openrouter.ai/models), exposing models from <u>many</u> different providers, most notably: OpenAI, Anthropic, Google, xAI, Mistral, etc.
@@ -198,6 +198,14 @@ outputs = ["Reveal"]
         * this is very common for on-cloud services, and it is the main reason why we need to be careful when experimenting with them, to avoid unexpected costs
 
     {{< image src="open-router-models.png" alt="Open Router's Model Zoo" max-h="40vh" >}}
+
+---
+
+## About Tokenization
+
+You may think that __token $\approx$ word__, but this actually depends on the specific [tokenization algorithm](https://huggingface.co/docs/course/it/chapter2/4) (tokenizer) being used by a model
+
+![](tokenization.png)
 
 ---
 
@@ -250,7 +258,7 @@ outputs = ["Reveal"]
 ## On-cloud Example with Open Router (pt. 3)
 
 4. To use OR's models programmatically, you need to create an __API key__ first (to be stored securely, and not shared with anyone else)
-    * (i.e. an _authentication token_ to let clients authenticate on your behalf) 
+    * (i.e. an _authentication token_ to let clients authenticate on your behalf)
     * you can do that for the _default workspace_ at <https://openrouter.ai/workspaces/default/keys>
         + __workspaces__ are OR-wise _administration domains_, inside which configurations rules (e.g. routing rules, cost limits, etc.) apply
 
@@ -331,6 +339,136 @@ outputs = ["Reveal"]
 
 {{% /section %}}
 
+---
+
+{{% section %}}
+
+---
+
+## What to expect in general from Web APIs of LLM-as-a-Service providers?
+
+1. __Pick__ among a variety of __models__ (by _name_), with different features, capabilities (and prices)
+
+2. __Provide__ general __instructions__ for the task at hand (e.g. via _system prompts_, or top-level instructions)
+
+3. __Ask__ the __next message__ to produce after a _sequence of messages_ (e.g. via chat completions)
+    - input/output messages may include content of _different modalities_ (e.g. text, images, audio, video, files, etc.)
+    - messages may also include _tool calls_, _tool results_, _reasoning traces_, etc.
+    - input messages may contain instructions about how to _structure the output_ (e.g. via JSON schema, or other constraints)
+
+4. Message __streaming__: receive partial responses as they are generated by the model, instead of waiting for the full response
+
+5. Include __tools descriptions__ somewhere, so that model can ask the outer system to _call_ (a.k.a. _invoke_) them when needed
+    - outer system is supposed to react to tool invocation with _tool results_, which are then fed back to the model as part of the conversation
+        + so that the model can decide how to use them to complete the task at hand
+
+6. Set the __temperature__ of the model, to control the randomness of the output
+    + e.g. higher temperature means more random output, while lower temperature means more deterministic output
+
+---
+
+## About LLMs' Web API Compatibility (pt. 1) – OpenAI family
+
+* **Shape**: _"Chat Completions"_ uses `/chat/completions` end point; _"Responses"_ uses `/responses` endpoint
+* **Abstraction**: Chat is role-message based; Responses is typed-item based
+    - e.g. chat can be a content (e.g. text, image), provided by a role (e.g. user, assistant); responses can be a tool call, a tool result, a reasoning step, etc.
+    - e.g. responses could be messages, or tool call or results
+* **Capabilities**:
+    - _calling tools_ (implies including tool definitions in the prompt, so that the model can call them)
+    - _structured_ output (e.g. constrain model response to match a given JSON schema)
+    - _multimodal_ (e.g. include images, audio, video in the prompt and/or response)
+    - _streaming_ (e.g. receive partial responses as they are generated by the model, instead of waiting for the full response)
+    - _reasoning traces_ (e.g. receive the model's reasoning process as part of the response, to understand how it arrived at its answer)
+* **Peculiarities**: "Responses" is more modern; "Chat Completions" is more compatible
+* **Portability**: "Chat Completions" is high; "Responses" is mostly OpenAI/Azure-native
+
+---
+
+## About LLMs' Web API Compatibility (pt. 2) – OpenAI-compatible APIs
+
+* **Shape**: mimic `/v1/chat/completions`, `/v1/completions`, `/v1/embeddings`
+* **Abstraction**: OpenAI-like messages over non-OpenAI models
+  - Example: same SDK call, different `base_url`, `api_key`, and `model`
+* **Capabilities**: usually chat and streaming; tools/JSON vary substantially
+  - Example: text streaming may work, but tool-call parsing may fail or differ
+* **Peculiarities**: compatibility is often only wire-level, not behavioral
+* **Portability**: good for client reuse; weak for advanced features exploitation
+
+{{% fragment %}}
+> It may happen that some providers (e.g. Ollama) offer an OpenAI-compatible API, but with a subset of the features of OpenAI's API, and with some differences in the behavior of the models (e.g. in terms of tool use, reasoning traces, etc.)
+
+when this is the case, the client will fail at run-time, complaining about unsupported features for non-reachable endopoint!
+{{% /fragment %}}
+
+---
+
+## About LLMs' Web API Compatibility (pt. 3) – Anthropic Clade API
+
+* **Shape**: `/v1/messages`
+* **Abstraction**: messages plus content blocks and top-level system instruction
+  - Example: `system: "..."` separate from `messages: [...]`
+* **Capabilities**: tool use, streaming, long context, prompt caching, extended thinking
+  - Example: cache a long policy document, then ask many follow-up questions
+* **Peculiarities**: system prompts, tool results, and streaming events differ from OpenAI
+* **Portability**: strong native API; needs adapter for OpenAI-style systems
+
+---
+
+## About LLMs' Web API Compatibility (pt. 4) – Google API
+
+* **Shape**: `generateContent` and `streamGenerateContent`
+* **Abstraction**: `contents` made of multimodal `parts`
+  - Example: one request can include `text`, `image`, `audio`, or `file` parts
+* **Capabilities**: native text, image, audio, video, files, tools, structured output
+  - Example: analyze a PDF/image, call a function, return schema-constrained JSON
+* **Peculiarities**: multimodality is core, not an add-on to chat
+* **Portability**: powerful native API; structurally different from OpenAI/Anthropic
+
+---
+
+## About LLMs' Web API Compatibility (pt. 5) – Cloud-provider APIs
+
+* **Shape**: AWS Bedrock Converse; Azure OpenAI / Azure AI Foundry APIs
+* **Abstraction**: provider-managed access to multiple or deployed models
+  - Example: Azure calls a deployment name; Bedrock calls a model via AWS runtime
+* **Capabilities**: streaming, tools, structured output, governance features
+  - Example: IAM-controlled access, content filters, guardrails, regional deployment
+* **Peculiarities**: deployment names, API versions, regions, IAM, filters leak into design
+* **Portability**: good inside the cloud ecosystem; weaker across ecosystems
+
+---
+
+## About LLMs' Web API Compatibility (pt. 6) – Gateways and routers
+
+* **Shape**: usually OpenAI-compatible proxy APIs
+* **Abstraction**: one internal API over many upstream providers
+* **Capabilities**: routing, fallback, retries, budgets, logging, observability
+* **Peculiarities**: advanced features leak through provider-specific behavior
+* **Portability**: strong for application architecture; imperfect for feature exploitation
+
+---
+
+## About LLMs' Web API Compatibility (pt. 7) – Wrap Up
+
+__OpenAI-like__ APIs are becoming the _de-facto_ standard, yet they are currently under active _evolution_
+
+{{<image src="apis.png" alt="LLMs' Web API Compatibility Landscape" max-h="70vh" >}}
+
+{{% /section %}}
+
+---
+
+## About client libraries
+
+- Main providers – especially the ones exposing their own Web APIs – come with their own __client libraries__
+    + wrapping those APIs into custom SDKs for target programming languages (e.g. Python, JS, Java, etc.)
+
+- Two major didactical choices here (among the _many_ possible ones):
+    1. [OpenAI Client lib](https://developers.openai.com/api/docs/libraries) flavoured for JavaScript, Python, .Net, Java, Go, Ruby, CLI
+        + it is the "reference" client, since OpenAI invented the first Web API for LLMs, and many other providers mimicked it
+    2. [LangChain](https://python.langchain.com/en/latest/) flavoured for Python and JavaScript
+        + it is a _third-party_ client library, which supports [multiple providers](https://docs.langchain.com/oss/python/integrations/providers/overview) and APIs (e.g. OpenAI, Anthropic, Google, Azure, etc.)
+        + it is more focused on _orchestrating_ interactions with LLMs and tools, rather than just wrapping Web APIs
 
 ---
 
