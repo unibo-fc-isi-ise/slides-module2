@@ -23,7 +23,7 @@ while True:
     if not user_text:
         continue
 
-    if user_text.lower() in {"exit", "quit"}:
+    if user_text.lower().strip() in {"/exit", "/quit"}:
         print("Goodbye!")
         exit(0)
 
