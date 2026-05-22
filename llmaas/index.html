@@ -31,7 +31,7 @@
 <h3 id="hahahugoshortcode1s2hbhb"><a href="mailto:giovanni.ciatto@unibo.it">Giovanni Ciatto</a></h3>
 <br>
 <br>
-<p>Compiled on: 2026-05-21
+<p>Compiled on: 2026-05-22
  — <a href="?print-pdf&amp;pdfSeparateFragments=false"><i class="fa fa-print" aria-hidden="true"></i> printable version</a></p>
 <p><a href="../#/toc"><i class="fa fa-undo" aria-hidden="true"></i> back to ToC</a></p>
 </section><section>
@@ -56,8 +56,9 @@
 </ul>
 </li>
 <li>
-<p><strong>Service Provider</strong>: several exist, with different offerings in terms of models, pricing, and features (e.g. <a href="https://openai.com/">OpenAI</a>, <a href="https://www.anthropic.com/">Anthropic</a>, <a href="https://cloud.google.com/vertex-ai">Google</a>, <a href="https://azure.microsoft.com/en-us/services/cognitive-services/">Microsoft</a>, etc.)</p>
+<p><strong>Service Provider</strong>: several exist, with different offerings in terms of models, pricing, and features</p>
 <ul>
+<li>e.g. <a href="https://openai.com/">OpenAI</a>, <a href="https://www.anthropic.com/">Anthropic</a>, <a href="https://cloud.google.com/vertex-ai">Google</a>, <a href="https://azure.microsoft.com/en-us/services/cognitive-services/">Microsoft</a>, <a href="https://huggingface.co/inference-api">Hugging Face</a>, or aggregators like <a href="https://openrouter.ai/">OpenRouter</a></li>
 <li>the choice of the service provider can depend on several factors, including:
 <ul>
 <li>the availability of <em>specific models</em> (e.g. GPT-4, Claude, Gemini, etc.)</li>
@@ -68,16 +69,169 @@
 </ul>
 </li>
 <li>
-<p><strong>HTTP API “Type”</strong></p>
+<p><strong>Web API Compatibility</strong>: early providers (e.g. OpenAI, Google, Amazon) invented <em>their own APIs</em>, similar in the spirit, but <em>different in syntax</em></p>
+<ul>
+<li>some later providers attempted to adopt the <em>same API</em> as the <em>market leader</em> (OpenAI), to facilitate adoption
+<ul>
+<li>others (e.g. HuggingFace) come with their own API, which may be more or less compatible with OpenAI’s API</li>
+</ul>
+</li>
+<li>API compatibility is key for <em>provider interchangeability</em>, hence allowing migration and <strong>avoiding vendor lock-in</strong></li>
+</ul>
 </li>
 <li>
-<p><strong>Client Library</strong></p>
+<p><strong>Client Libraries</strong>, in target <em>programming languages</em> wrap Web API clients and make it easier to use <em>LLMs programmaticatically</em></p>
+<ul>
+<li>here you may care about which programming languages (e.g. Python, JS, Java, etc.) are supported by some given client library…
+<ul>
+<li>most commonly, the same provider implements the same meta-model onto different target programming languages (e.g. OpenAI’ client is available in Python, JS, Java, etc.)</li>
+</ul>
+</li>
+<li>there exist also <em>third-party</em> client libraries, which may support multiple Web APIs, and therefore multiple providers (e.g. <a href="https://python.langchain.com/en/latest/">LangChain</a>)</li>
+</ul>
+</li>
+</ol>
+</section><section>
+
+
+<section data-shortcode-section="">
+<h2 id="on-premise-example-with-ollama-pt-1">On-premise Example with Ollama pt. 1</h2>
+<p>(cf. <a href="https://ollama.com/">https://ollama.com/</a>)</p>
+<ol start="0">
+<li>
+<p>Ensure you have the <strong>required hardware</strong> (e.g. Nvidia GPU, Apple Silicon, etc.)</p>
+<ul>
+<li>details and configuration caveats: <a href="https://docs.ollama.com/gpu">https://docs.ollama.com/gpu</a></li>
+</ul>
+</li>
+<li>
+<p><strong>Install</strong> Ollama on your machine:</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span>brew install ollama <span style="color:#8f5902;font-style:italic"># For macOS (Apple Silicon)</span>
+</span></span><span style="display:flex;"><span>curl -fsSL https://ollama.com/install.sh <span style="color:#000;font-weight:bold">|</span> sh <span style="color:#8f5902;font-style:italic"># For Linux</span>
+</span></span><span style="display:flex;"><span>irm https://ollama.com/install.ps1 <span style="color:#000;font-weight:bold">|</span> iex <span style="color:#8f5902;font-style:italic"># For Windows (PowerShell)</span>
+</span></span></code></pre></div></li>
+<li>
+<p>Activate the Ollama <strong>service</strong> in some shell (alternatively, configure a <em>deamon</em> to run it in background):</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span>ollama serve
+</span></span></code></pre></div></li>
+</ol>
+</section><section>
+<h2 id="on-premise-example-with-ollama-pt-2">On-premise Example with Ollama pt. 2</h2>
+<ol start="3">
+<li>
+<p>Have a look to Ollama’s <strong>model zoo</strong> on <a href="https://ollama.com/models">https://ollama.com/models</a>, and <strong>select</strong> some model you like among the many variants available</p>
+<ul>
+<li>notice naming convention: <code>model:variant</code>, most commonly the variant denotes the size of the model</li>
+</ul>
+ <img src="ollama-models.png" alt="Ollama's Model Zoo" style="max-width: 95vw; max-height: 70vh; object-fit: contain;">
+ <img src="ollama-models-gemma4.png" alt="Available variants for a Model on Ollama's Model Zoo" style="max-width: 95vw; max-height: 70vh; object-fit: contain;">
+</li>
+</ol>
+</section><section>
+<h2 id="on-premise-example-with-ollama-pt-3">On-premise Example with Ollama pt. 3</h2>
+<ol start="4">
+<li>
+<p>Pick one model, e.g. <code>gemma4:e2b</code>, and <strong>pull</strong> it:</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span>ollama pull gemma4:e2b
+</span></span></code></pre></div></li>
+<li>
+<p>You may use Ollama’s native <strong>CLI conversational interface</strong> to try the model out:</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span>ollama chat gemma4:e2b
+</span></span></code></pre></div><p>example of conversation (notice that the model is also showing its <em>thinking process</em>):</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span>&gt;&gt;&gt; ciao!
+</span></span><span style="display:flex;"><span>Thinking...
+</span></span><span style="display:flex;"><span>Thinking Process:
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>1.  **Analyze the input:** The input is "ciao!". This is an informal Italian greeting, meaning "hello!".
+</span></span><span style="display:flex;"><span>2.  **Determine the appropriate response:** Since the user initiated a friendly greeting, the response 
+</span></span><span style="display:flex;"><span>should also be a greeting, ideally reciprocating the language or offering a friendly follow-up.
+</span></span><span style="display:flex;"><span>3.  **Formulate the response (in Italian):** The simplest and most common reply is "ciao" (hello/hi) or 
+</span></span><span style="display:flex;"><span>a slightly expanded version.
+</span></span><span style="display:flex;"><span>4.  **Add a standard conversational element (optional but good practice):** Asking how the user is doing 
+</span></span><span style="display:flex;"><span>is polite. ("Come stai?" / "Come va?")
+</span></span><span style="display:flex;"><span>5.  **Final selection:** A friendly, standard reply.
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>*Self-Correction/Refinement:* Keep it warm and open-ended.
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>*Output Generation:* Ciao! Come stai? (Hello! How are you?)
+</span></span><span style="display:flex;"><span>...done thinking.
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Ciao! Come stai? 😊
+</span></span></code></pre></div></li>
+</ol>
+</section><section>
+<h2 id="on-premise-example-with-ollama-pt-3-1">On-premise Example with Ollama pt. 3</h2>
+<ol start="6">
+<li>Should you ever want to use the model <em>programmatically</em>, you can use Ollama’s <strong>API</strong>, which is <em>partially</em> compatible with OpenAI’s API
+<ul>
+<li>
+<p>e.g. it supports the same <code>/v1/chat/completions</code> endpoint, but not all the features of OpenAI’s API, e.g. fine-tuning, custom models, etc.</p>
+</li>
+<li>
+<p>in the client program, recall to set the <strong>API base URL</strong> to point to your local Ollama service (by default: <a href="http://localhost:11434">http://localhost:11434</a>)</p>
+</li>
+<li>
+<p>to prove that the API is working, you can send a test request via <code>curl</code>:</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span>curl -X POST <span style="color:#4e9a06">"http://localhost:11434/v1/chat/completions"</span> <span style="color:#4e9a06">\
+</span></span></span><span style="display:flex;"><span>    -H <span style="color:#4e9a06">"Content-Type: application/json"</span> <span style="color:#4e9a06">\
+</span></span></span><span style="display:flex;"><span>    -d <span style="color:#4e9a06">'{
+</span></span></span><span style="display:flex;"><span><span style="color:#4e9a06">        "model": "gemma4:e2b",
+</span></span></span><span style="display:flex;"><span><span style="color:#4e9a06">        "messages": [
+</span></span></span><span style="display:flex;"><span><span style="color:#4e9a06">            {"role": "system", "content": "You are a helpful assistant."},
+</span></span></span><span style="display:flex;"><span><span style="color:#4e9a06">            {"role": "user", "content": "What is the capital of France?"}
+</span></span></span><span style="display:flex;"><span><span style="color:#4e9a06">        ]
+</span></span></span><span style="display:flex;"><span><span style="color:#4e9a06">    }'</span>
+</span></span></code></pre></div><p>result (converted in YAML for the sake of readability):</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">id</span><span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8"> </span><span style="color:#000">chatcmpl-85</span><span style="color:#f8f8f8">
+</span></span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">object</span><span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8"> </span><span style="color:#000">chat.completion</span><span style="color:#f8f8f8">
+</span></span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">created</span><span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8"> </span><span style="color:#0000cf;font-weight:bold">1779435598</span><span style="color:#f8f8f8">
+</span></span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">model</span><span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8"> </span><span style="color:#000">gemma4:e2b</span><span style="color:#f8f8f8">
+</span></span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">system_fingerprint</span><span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8"> </span><span style="color:#000">fp_ollama</span><span style="color:#f8f8f8">
+</span></span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">choices</span><span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8">
+</span></span></span><span style="display:flex;"><span>- <span style="color:#204a87;font-weight:bold">index</span><span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8"> </span><span style="color:#0000cf;font-weight:bold">0</span><span style="color:#f8f8f8">
+</span></span></span><span style="display:flex;"><span><span style="color:#f8f8f8">    </span><span style="color:#204a87;font-weight:bold">message</span><span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8">
+</span></span></span><span style="display:flex;"><span><span style="color:#f8f8f8">    </span><span style="color:#204a87;font-weight:bold">role</span><span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8"> </span><span style="color:#000">assistant</span><span style="color:#f8f8f8">
+</span></span></span><span style="display:flex;"><span><span style="color:#f8f8f8">    </span><span style="color:#204a87;font-weight:bold">content</span><span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8"> </span><span style="color:#000">The capital of France is **Paris**.</span><span style="color:#f8f8f8">
+</span></span></span><span style="display:flex;"><span><span style="color:#f8f8f8">    </span><span style="color:#204a87;font-weight:bold">reasoning</span><span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8"> </span><span style="color:#000;font-weight:bold">|-</span><span style="color:#8f5902;font-style:italic">
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic">        Thinking Process:
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic">
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic">        1.  **Analyze the Request:** The user is asking a factual question: "What is the capital of France?"
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic">        2.  **Identify the Knowledge Needed:** I need to retrieve the capital city of France.
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic">        3.  **Recall/Retrieve the Fact:** The capital of France is Paris.
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic">        4.  **Formulate the Answer:** Provide a direct and accurate answer.
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic">        5.  **Final Review:** The answer is correct and directly addresses the query. (Capital of France = Paris).</span><span style="color:#f8f8f8">
+</span></span></span><span style="display:flex;"><span><span style="color:#f8f8f8">    </span><span style="color:#204a87;font-weight:bold">finish_reason</span><span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8"> </span><span style="color:#000">stop</span><span style="color:#f8f8f8">
+</span></span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">usage</span><span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8">
+</span></span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">prompt_tokens</span><span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8"> </span><span style="color:#0000cf;font-weight:bold">29</span><span style="color:#f8f8f8">
+</span></span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">completion_tokens</span><span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8"> </span><span style="color:#0000cf;font-weight:bold">121</span><span style="color:#f8f8f8">
+</span></span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">total_tokens</span><span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8"> </span><span style="color:#0000cf;font-weight:bold">150</span><span style="color:#f8f8f8">
+</span></span></span></code></pre></div></li>
+</ul>
+</li>
+</ol>
+
+</section>
+</section><section>
+<h2 id="on-cloud-example-with-open-router">On-cloud Example with Open Router</h2>
+<ol>
+<li>
+<p><strong>Sign up</strong> &amp; <em>log in</em> for an account on Open Router: <a href="https://openrouter.ai">https://openrouter.ai</a></p>
+<ul>
+<li>easier to re-use your GitHub account</li>
+</ul>
+</li>
+<li>
+<p>Optionally add <strong>payment methods</strong> and <em>credits</em> to your account in <a href="https://openrouter.ai/settings/credits">https://openrouter.ai/settings/credits</a></p>
+<ul>
+<li>no credit needed for this lecture</li>
+<li>recall to set <em>expense limitation</em> to avoid unexpected costs, in case you decide to experiment with actual money</li>
+</ul>
 </li>
 </ol>
 </section><section>
 <h1 id="lecture-is-over">Lecture is Over</h1>
 <br>
-<p>Compiled on: 2026-05-21
+<p>Compiled on: 2026-05-22
  — <a href="?print-pdf&amp;pdfSeparateFragments=false"><i class="fa fa-print" aria-hidden="true"></i> printable version</a></p>
 <p><a href="../#/toc"><i class="fa fa-undo" aria-hidden="true"></i> back to ToC</a></p>
 </section>
