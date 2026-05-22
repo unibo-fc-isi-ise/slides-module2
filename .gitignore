@@ -6,3 +6,4 @@ _gen/
 *.hprof
 *build.lock
 .venv
+.DS_Store
