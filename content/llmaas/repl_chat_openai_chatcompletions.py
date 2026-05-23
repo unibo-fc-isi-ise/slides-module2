@@ -25,7 +25,6 @@ try:
             response = client.chat.completions.create(model=model, messages=messages)
         except Exception as exc:
             print(f"error> {exc}")
-            messages.pop()
             continue
         answer = response.choices[0].message.content or ""
         print(f"assistant> {answer}")

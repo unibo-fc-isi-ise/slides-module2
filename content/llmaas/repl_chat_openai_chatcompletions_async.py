@@ -28,8 +28,7 @@ async def main() -> int:
             try:
                 stream = await client.chat.completions.create(model=model, messages=messages, stream=True)
             except Exception as exc:
-                print(f"error> {exc}")
-                messages.pop()
+                print(f"\nerror> {exc}")
                 continue
             answer_parts = []
             print("assistant> ", end="", flush=True)
@@ -45,7 +44,6 @@ async def main() -> int:
                     answer_parts.append(chunk)
             except Exception as exc:
                 print(f"\nerror> {exc}", flush=True)
-                messages.pop()
                 continue
             print(flush=True)
             answer = "".join(answer_parts)
