@@ -422,7 +422,6 @@
 
 
 <section data-shortcode-section="">
-</section><section>
 <h2 id="what-to-expect-in-general-from-web-apis-of-llm-as-a-service-providers">What to expect in general from Web APIs of LLM-as-a-Service providers?</h2>
 <ol>
 <li>
@@ -907,6 +906,254 @@
 </span></span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">response_format</span><span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8"> 
 </span></span></span></code></pre></div><ul>
 <li>most commonly, one cares about the first choice (<code>choices[0]</code>), and in particular about the generated message (<code>choices[0].message.content</code>), but the rest of the metadata can be useful for debugging, analysis, and cost control purposes</li>
+</ul>
+
+</section>
+</section><section>
+
+
+<section data-shortcode-section="">
+<h2 id="example-2-async-cli-chat-with-streaming-pt-1">Example 2: Async CLI Chat with Streaming (pt. 1)</h2>
+<ol>
+<li>Client setup is very similar to the sync version, but we use <code>AsyncOpenAI(...)</code> and keep the same env-driven configuration style:</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">import</span> <span style="color:#000">asyncio</span>
+</span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">import</span> <span style="color:#000">os</span>
+</span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">from</span> <span style="color:#000">openai</span> <span style="color:#204a87;font-weight:bold">import</span> <span style="color:#000">AsyncOpenAI</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000">base_url</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#000">os</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">environ</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">get</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"OPENAI_BASE_URL"</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">"https://openrouter.ai/api/v1/"</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#000">api_key</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#000">os</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">environ</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">get</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"OPENAI_API_KEY"</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#204a87;font-weight:bold">or</span> <span style="color:#204a87">input</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">f</span><span style="color:#4e9a06">"Enter your API key for </span><span style="color:#4e9a06">{</span><span style="color:#000">base_url</span><span style="color:#4e9a06">}</span><span style="color:#4e9a06">: "</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#000">model</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#000">os</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">environ</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">get</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"OPENAI_MODEL"</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">"openrouter/auto"</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000">client</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#000">AsyncOpenAI</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">base_url</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#000">base_url</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">api_key</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#000">api_key</span><span style="color:#000;font-weight:bold">)</span>
+</span></span></code></pre></div><p>notice that:</p>
+<ul>
+<li><code>AsyncOpenAI(...)</code> is the async counterpart of <code>OpenAI(...)</code></li>
+<li>we need module <code>asyncio</code> to run the main async function, and to handle async calls in general</li>
+</ul>
+<ol start="2">
+<li>
+<p>As the program is asynchronous, we need to define an <code>async def main():</code> function, which will contain the main logic of our program, and then run it with <code>asyncio.run(main())</code> at the end of the script</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">if</span> <span style="color:#000">__name__</span> <span style="color:#ce5c00;font-weight:bold">==</span> <span style="color:#4e9a06">"__main__"</span><span style="color:#000;font-weight:bold">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#204a87;font-weight:bold">raise</span> <span style="color:#c00;font-weight:bold">SystemExit</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">asyncio</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">run</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">main</span><span style="color:#000;font-weight:bold">()))</span>
+</span></span></code></pre></div></li>
+</ol>
+</section><section>
+<h2 id="example-2-async-cli-chat-with-streaming-pt-2">Example 2: Async CLI Chat with Streaming (pt. 2)</h2>
+<ol start="3">
+<li>
+<p>The main function is structure more or less like the sync version…</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">async</span> <span style="color:#204a87;font-weight:bold">def</span> <span style="color:#000">main</span><span style="color:#000;font-weight:bold">()</span> <span style="color:#ce5c00;font-weight:bold">-&gt;</span> <span style="color:#204a87">int</span><span style="color:#000;font-weight:bold">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#204a87">print</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"Type '/exit' or '/quit' to stop. Type '/retry' to retry the last message."</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#204a87;font-weight:bold">try</span><span style="color:#000;font-weight:bold">:</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#204a87;font-weight:bold">while</span> <span style="color:#204a87;font-weight:bold">True</span><span style="color:#000;font-weight:bold">:</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#000">user_text</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#204a87">input</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"you&gt; "</span><span style="color:#000;font-weight:bold">)</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">strip</span><span style="color:#000;font-weight:bold">()</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#204a87;font-weight:bold">if</span> <span style="color:#204a87;font-weight:bold">not</span> <span style="color:#000">user_text</span><span style="color:#000;font-weight:bold">:</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#204a87;font-weight:bold">continue</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#204a87;font-weight:bold">if</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#000">cmd</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">user_text</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">lower</span><span style="color:#000;font-weight:bold">()</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">strip</span><span style="color:#000;font-weight:bold">())</span> <span style="color:#204a87;font-weight:bold">in</span> <span style="color:#000;font-weight:bold">{</span><span style="color:#4e9a06">"/exit"</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">"/quit"</span><span style="color:#000;font-weight:bold">}:</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#204a87;font-weight:bold">break</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#204a87;font-weight:bold">if</span> <span style="color:#000">cmd</span> <span style="color:#204a87;font-weight:bold">not</span> <span style="color:#204a87;font-weight:bold">in</span> <span style="color:#000;font-weight:bold">{</span><span style="color:#4e9a06">"/retry"</span><span style="color:#000;font-weight:bold">}:</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#000">messages</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">append</span><span style="color:#000;font-weight:bold">(</span><span style="color:#204a87">dict</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">role</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#4e9a06">"user"</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">content</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#000">user_text</span><span style="color:#000;font-weight:bold">))</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#204a87;font-weight:bold">try</span><span style="color:#000;font-weight:bold">:</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#000">stream</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#204a87;font-weight:bold">await</span> <span style="color:#000">client</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">chat</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">completions</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">create</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">model</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#000">model</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">messages</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#000">messages</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">stream</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#204a87;font-weight:bold">True</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#204a87;font-weight:bold">except</span> <span style="color:#c00;font-weight:bold">Exception</span> <span style="color:#204a87;font-weight:bold">as</span> <span style="color:#000">exc</span><span style="color:#000;font-weight:bold">:</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#204a87">print</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">f</span><span style="color:#4e9a06">"</span><span style="color:#4e9a06">\n</span><span style="color:#4e9a06">error&gt; </span><span style="color:#4e9a06">{</span><span style="color:#000">exc</span><span style="color:#4e9a06">}</span><span style="color:#4e9a06">"</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#204a87;font-weight:bold">continue</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#000">answer_parts</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">[]</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#204a87">print</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"assistant&gt; "</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">end</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#4e9a06">""</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">flush</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#204a87;font-weight:bold">True</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#204a87;font-weight:bold">try</span><span style="color:#000;font-weight:bold">:</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#204a87;font-weight:bold">async</span> <span style="color:#204a87;font-weight:bold">for</span> <span style="color:#000">item</span> <span style="color:#204a87;font-weight:bold">in</span> <span style="color:#000">stream</span><span style="color:#000;font-weight:bold">:</span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#204a87;font-weight:bold">if</span> <span style="color:#204a87;font-weight:bold">not</span> <span style="color:#000">item</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">choices</span><span style="color:#000;font-weight:bold">:</span>
+</span></span><span style="display:flex;"><span>                        <span style="color:#204a87;font-weight:bold">continue</span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#000">chunk</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#000">item</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">choices</span><span style="color:#000;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0</span><span style="color:#000;font-weight:bold">]</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">delta</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">content</span> <span style="color:#204a87;font-weight:bold">or</span> <span style="color:#4e9a06">""</span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#204a87;font-weight:bold">if</span> <span style="color:#204a87;font-weight:bold">not</span> <span style="color:#000">chunk</span><span style="color:#000;font-weight:bold">:</span>
+</span></span><span style="display:flex;"><span>                        <span style="color:#204a87;font-weight:bold">continue</span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#000">chunk</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#000">chunk</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">replace</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"</span><span style="color:#4e9a06">\n</span><span style="color:#4e9a06">"</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">"</span><span style="color:#4e9a06">\n</span><span style="color:#4e9a06">assistant&gt; "</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#204a87">print</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">chunk</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">end</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#4e9a06">""</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">flush</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#204a87;font-weight:bold">True</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#000">answer_parts</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">append</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">chunk</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#204a87;font-weight:bold">except</span> <span style="color:#c00;font-weight:bold">Exception</span> <span style="color:#204a87;font-weight:bold">as</span> <span style="color:#000">exc</span><span style="color:#000;font-weight:bold">:</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#204a87">print</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">f</span><span style="color:#4e9a06">"</span><span style="color:#4e9a06">\n</span><span style="color:#4e9a06">error&gt; </span><span style="color:#4e9a06">{</span><span style="color:#000">exc</span><span style="color:#4e9a06">}</span><span style="color:#4e9a06">"</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">flush</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#204a87;font-weight:bold">True</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#204a87;font-weight:bold">continue</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#204a87">print</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">flush</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#204a87;font-weight:bold">True</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#000">answer</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#4e9a06">""</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">join</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">answer_parts</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#000">messages</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">append</span><span style="color:#000;font-weight:bold">(</span><span style="color:#204a87">dict</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">role</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#4e9a06">"assistant"</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">content</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#000">answer</span><span style="color:#000;font-weight:bold">))</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#204a87;font-weight:bold">except</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#c00;font-weight:bold">EOFError</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#c00;font-weight:bold">KeyboardInterrupt</span><span style="color:#000;font-weight:bold">):</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#204a87;font-weight:bold">pass</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#204a87">print</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"Goodbye!"</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#204a87;font-weight:bold">return</span> <span style="color:#0000cf;font-weight:bold">0</span>
+</span></span></code></pre></div><p>with some differences in the way we i. create the completion request, by setting <code>stream=True</code> to receive a stream of response parts, and by awaiting the response with <code>async for</code> instead of just <code>for</code>; and ii. consume the stream of response parts</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#000">stream</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#204a87;font-weight:bold">await</span> <span style="color:#000">client</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">chat</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">completions</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">create</span><span style="color:#000;font-weight:bold">(</span><span style="color:#ce5c00;font-weight:bold">...</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">stream</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#204a87;font-weight:bold">True</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#8f5902;font-style:italic"># create the request + open response stream</span>
+</span></span><span style="display:flex;"><span><span style="color:#000">answer_parts</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">[]</span> <span style="color:#8f5902;font-style:italic"># buffer to store the parts of the answer as they arrive</span>
+</span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">async</span> <span style="color:#204a87;font-weight:bold">for</span> <span style="color:#000">item</span> <span style="color:#204a87;font-weight:bold">in</span> <span style="color:#000">stream</span><span style="color:#000;font-weight:bold">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000">chunk</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#000">item</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">choices</span><span style="color:#000;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0</span><span style="color:#000;font-weight:bold">]</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">delta</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">content</span> <span style="color:#204a87;font-weight:bold">or</span> <span style="color:#4e9a06">""</span> <span style="color:#8f5902;font-style:italic"># get each chuck of the answer as it arrives (if any)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000">answer_parts</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">append</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">chunk</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#8f5902;font-style:italic"># store the chunk in the buffer</span>
+</span></span><span style="display:flex;"><span><span style="color:#000">messages</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">append</span><span style="color:#000;font-weight:bold">(</span><span style="color:#204a87">dict</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">role</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#4e9a06">"assistant"</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">content</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#4e9a06">""</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">join</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">answer_parts</span><span style="color:#000;font-weight:bold">)))</span> <span style="color:#8f5902;font-style:italic"># reconstract the full answer and store it in the conversation history</span>
+</span></span></code></pre></div><ul>
+<li>notice the <code>.delta</code> field in the response parts</li>
+<li>notice that partial responses should be printed with <code>print(..., end="", flush=True)</code> to avoid buffering issues in the terminal</li>
+</ul>
+</li>
+</ol>
+</section><section>
+<h2 id="example-2-async-cli-chat-with-streaming-pt-3">Example 2: Async CLI Chat with Streaming (pt. 3)</h2>
+<ol start="4">
+<li>
+<p>Full code <a href="./repl_chat_openai_chatcompletions_async.py">here</a></p>
+</li>
+<li>
+<p>Example of interaction (start with <code>python path/to/script_async.py</code>):</p>
+</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span>Enter your API key for https://openrouter.ai/api/v1/: sk-or-v1-XXXXXXXXXXXXXXXXXXXXXXXXX
+</span></span><span style="display:flex;"><span>Using model: openrouter/auto
+</span></span><span style="display:flex;"><span>Type '/exit' or '/quit' to stop. Type '/retry' to retry the last message.
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>you&gt; hi bro
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>assistant&gt; Hey! How’s it going? How can I help today? I can answer questions, explain things, help with writing or editing, brainstorm ideas, or assist with code—tell me what you need.
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>you&gt; can you generate the first 20 verses of the divine comedy, in english?
+</span></span><span style="display:flex;"><span>assistant&gt; Sure—do you want the first 20 lines from Inferno, Canto I in Henry Wadsworth Longfellow’s public-domain English translation, or would you prefer a different translation? I can paste exactly whichever you choose.
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>you&gt; yeah that's fine
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>assistant&gt; Here are the first 20 lines of Inferno, Canto I, from Henry Wadsworth Longfellow's translation of Dante Alighieri's *Divine Comedy*:
+</span></span><span style="display:flex;"><span>assistant&gt; 
+</span></span><span style="display:flex;"><span>assistant&gt; Midway upon the journey of our life
+</span></span><span style="display:flex;"><span>assistant&gt; I found myself within a forest dark,
+</span></span><span style="display:flex;"><span>assistant&gt; For the strayed path had filled my soul with strife.
+</span></span><span style="display:flex;"><span>assistant&gt; How hard a thing it is to tell what deep
+</span></span><span style="display:flex;"><span>assistant&gt; And tangled wood this was, how wild and steep,
+</span></span><span style="display:flex;"><span>assistant&gt; Which on my memory leaves so keen a fear!
+</span></span><span style="display:flex;"><span>assistant&gt; So bitter is it, death is slight relief;
+</span></span><span style="display:flex;"><span>assistant&gt; But to set forth the goodness that I found,
+</span></span><span style="display:flex;"><span>assistant&gt; I'll speak of other things that there appeared.
+</span></span><span style="display:flex;"><span>assistant&gt; I know not how I entered it, so deep
+</span></span><span style="display:flex;"><span>assistant&gt; I had become in slumber at that hour
+</span></span><span style="display:flex;"><span>assistant&gt; When I had wandered from the path of truth.
+</span></span><span style="display:flex;"><span>assistant&gt; 
+</span></span><span style="display:flex;"><span>assistant&gt; But after I had reached a hill’s low foot,
+</span></span><span style="display:flex;"><span>assistant&gt; Where the long valley terminating had
+</span></span><span style="display:flex;"><span>assistant&gt; My fear, a place, I say, that any heart
+</span></span><span style="display:flex;"><span>assistant&gt; With dread doth pierce; and when I looked above,
+</span></span><span style="display:flex;"><span>assistant&gt; I saw its highest point already clothed
+</span></span><span style="display:flex;"><span>assistant&gt; With rays of the planet that guides man aright
+</span></span><span style="display:flex;"><span>assistant&gt; On every path. Then was the fear a while
+</span></span><span style="display:flex;"><span>assistant&gt; Abated.
+</span></span><span style="display:flex;"><span>assistant&gt; 
+</span></span><span style="display:flex;"><span>assistant&gt; Let me know if you’d like more!
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>you&gt; Goodbye!
+</span></span></code></pre></div><ol start="6">
+<li>When you run it, pay attention to:
+<ul>
+<li>perceived latency (first token arrives earlier than full-response mode)</li>
+</ul>
+</li>
+</ol>
+
+</section>
+</section><section>
+
+
+<section data-shortcode-section="">
+<h2 id="exercise-1-caching-sync-requests">Exercise 1: Caching Sync Requests</h2>
+<blockquote>
+<p><strong>Problem</strong>: when experimenting with <em>programmatic</em> LLM interfaces, one does a lot of trial and erros, possibly consuming credits, or wasting attempts w.r.t. rate limits, etc.</p>
+</blockquote>
+<blockquote>
+<p><strong>Idea</strong>: implement a simple <em>caching</em> mechanism for your program, so that you can store the responses of the model for given inputs, and reuse them when the same inputs are encountered again (also good for <em>reproducibility</em> and <em>debugging</em> purposes)</p>
+</blockquote>
+<h3 id="to-do-list">TO-DO List</h3>
+<ol>
+<li>Implement some caching mechanism for the Sync CLI Chat program, so that Chat Completion requests are cached on the file system before being issued</li>
+<li>Upon doing a new request to the model, first check if the same request has already been made before, and if so, return the cached response instead of issuing a new request to the model</li>
+</ol>
+</section><section>
+<h2 id="exercise-1-caching-sync-requests-cont">Exercise 1: Caching Sync Requests (cont.)</h2>
+<h3 id="decision-points-and-hints">Decision points and hints</h3>
+<ul>
+<li>Where to store the cache?
+<ul>
+<li>e.g. in local untrucked folder, temp folder, home sub-folder, etc.</li>
+</ul>
+</li>
+<li>How to index the caches? A.k.a. when a cache is hit?
+<ul>
+<li>same last message? same conversation history? same model and parameters? same temperature? same model?</li>
+</ul>
+</li>
+<li>How to store the cache?
+<ul>
+<li>e.g. as YAML/JSON files, with a naming convention based on the cache index?</li>
+<li>how to simply cache lookup then?</li>
+</ul>
+</li>
+<li>How to restructure the code?</li>
+</ul>
+<h3 id="how-to-test-it">How to test it?</h3>
+<ul>
+<li>run the program, and try to send the same message twice, to see if the second time the response is returned from the cache (e.g. by printing a message like “Cache hit! Returning cached response.”), and check that the response is indeed the same as the first time</li>
+<li>try to change the message slightly (e.g. by adding a punctuation mark), and see that the cache is not hit, and a new request is sent to the model, and check that the response is different from the first time</li>
+</ul>
+
+</section>
+</section><section>
+
+
+<section data-shortcode-section="">
+<h2 id="exercise-2-retry-and-exponential-backoff">Exercise 2: Retry and Exponential Backoff</h2>
+<blockquote>
+<p><strong>Problem</strong>: when interacting with LLMs via Web APIs, it may happen that some requests <em>fail</em> due to <em>transient issues</em> (e.g. network errors, <u>rate limits</u>, etc.)</p>
+</blockquote>
+<blockquote>
+<p><strong>Solution</strong>: it is good practice to implement some (configurable) <em>retry mechanism</em> with (configurable) <a href="https://en.wikipedia.org/wiki/Exponential_backoff">exponential backoff</a> to handle such cases gracefully</p>
+</blockquote>
+<h3 id="to-do-list">TO-DO List</h3>
+<ol>
+<li>Implement a retry + delay mechanism for the Sync CLI Chat program, so that
+<ul>
+<li>when a request to the model fails, the program <em>automatically retries</em> the request after a <em>certain delay</em>, up to a <em>maximum</em> number of <em>retries</em></li>
+<li>the <em>delay</em> between retries <em>increases exponentially</em> (e.g. 1s, 2s, 4s, 8s, etc.) to avoid overwhelming the server and to give it some time to recover from transient issues</li>
+</ul>
+</li>
+<li>Let all these parameters (e.g. number of retries, initial delay, backoff factor, etc.) be configurable via env vars or command line arguments (with smart defaults)</li>
+</ol>
+</section><section>
+<h2 id="exercise-2-retry-and-exponential-backoff-cont">Exercise 2: Retry and Exponential Backoff (cont.)</h2>
+<h3 id="decision-points-and-hints">Decision points and hints</h3>
+<ul>
+<li>How to detect a failed request?
+<ul>
+<li>e.g. catch exceptions from the client library, check HTTP status codes, etc.</li>
+</ul>
+</li>
+<li>How to implement the retry mechanism?
+<ul>
+<li>e.g. with a simple loop and <code>try-except</code> block, or with a more sophisticated library like <code>tenacity</code>?</li>
+</ul>
+</li>
+<li>How to implement the exponential backoff?
+<ul>
+<li>e.g. with a simple calculation based on the retry count, or with a library like <code>tenacity</code> that has built-in support for exponential backoff</li>
+</ul>
+</li>
+<li>How to make the parameters configurable?
+<ul>
+<li>e.g. via env vars, command line arguments, or a configuration file? consider using <code>argparse</code> for command line arguments, and <code>os.getenv</code> for env vars</li>
+</ul>
+</li>
+<li>How to restructure the code?
+<ul>
+<li>e.g. separate the retry logic into a decorator or a helper function, to keep the main logic of the program clean and focused on the chat interaction</li>
+</ul>
+</li>
+</ul>
+<h3 id="how-to-test-it">How to test it?</h3>
+<ul>
+<li>run the program, and simulate a transient failure (e.g. by disconnecting the network, or by sending too many requests to trigger rate limits), and see that the program retries the request with increasing delays, and eventually succeeds or gives up after the maximum number of retries</li>
+<li>try to configure the parameters (e.g. number of retries, initial delay, backoff factor) and see that the retry behavior changes accordingly (e.g. more retries, longer delays, etc.)</li>
 </ul>
 
 </section>
