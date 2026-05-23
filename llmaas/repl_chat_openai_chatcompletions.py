@@ -1,5 +1,4 @@
 import os
-import sys
 from openai import OpenAI
 
 
@@ -11,31 +10,26 @@ client = OpenAI(base_url=base_url, api_key=api_key)
 messages = [dict(role="system", content="Just chat with the user, be friendly and helpful. Do not think. Just answer.")]
 
 print(f"Using model: {model}")
-print("Type 'exit' or 'quit' to stop.")
+print("Type '/exit' or '/quit' to stop. Type '/retry' to retry the last message.")
 
-while True:
-    try:
+try:
+    while True:
         user_text = input("you> ").strip()
-    except (EOFError, KeyboardInterrupt):
-        print("Goodbye!")
-        exit(0)
-
-    if not user_text:
-        continue
-
-    if user_text.lower().strip() in {"/exit", "/quit"}:
-        print("Goodbye!")
-        exit(0)
-
-    messages.append(dict(role="user", content=user_text))
-
-    try:
-        response = client.chat.completions.create(model=model, messages=messages)
-    except Exception as exc:
-        print(f"error> {exc}", file=sys.stderr)
-        messages.pop()
-        continue
-
-    answer = response.choices[0].message.content or ""
-    print(f"assistant> {answer}")
-    messages.append(dict(role="assistant", content=answer))
+        if not user_text:
+            continue
+        if (cmd := user_text.lower().strip()) in {"/exit", "/quit"}:
+            break
+        if cmd not in {"/retry"}:
+            messages.append(dict(role="user", content=user_text))
+        try:
+            response = client.chat.completions.create(model=model, messages=messages)
+        except Exception as exc:
+            print(f"error> {exc}")
+            continue
+        answer = response.choices[0].message.content or ""
+        print(f"assistant> {answer}")
+        messages.append(dict(role="assistant", content=answer))
+except (EOFError, KeyboardInterrupt):
+    pass
+print("Goodbye!")
+exit(0)
