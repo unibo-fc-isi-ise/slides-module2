@@ -343,8 +343,6 @@ You may think that __token $\approx$ word__, but this actually depends on the sp
 
 {{% section %}}
 
----
-
 ## What to expect in general from Web APIs of LLM-as-a-Service providers?
 
 1. __Pick__ among a variety of __models__ (by _name_), with different features, capabilities (and prices)
@@ -722,6 +720,180 @@ response_format:
 ```
 
 - most commonly, one cares about the first choice (`choices[0]`), and in particular about the generated message (`choices[0].message.content`), but the rest of the metadata can be useful for debugging, analysis, and cost control purposes
+
+{{% /section %}}
+
+---
+
+{{% section %}}
+
+## Example 2: Async CLI Chat with Streaming (pt. 1)
+
+1. Client setup is very similar to the sync version, but we use `AsyncOpenAI(...)` and keep the same env-driven configuration style:
+
+  {{% code path="content/llmaas/repl_chat_openai_chatcompletions_async.py" from="1" to="10" %}}
+
+  notice that:
+  - `AsyncOpenAI(...)` is the async counterpart of `OpenAI(...)`
+  - we need module `asyncio` to run the main async function, and to handle async calls in general
+
+2. As the program is asynchronous, we need to define an `async def main():` function, which will contain the main logic of our program, and then run it with `asyncio.run(main())` at the end of the script
+
+    {{% code path="content/llmaas/repl_chat_openai_chatcompletions_async.py" from="56" to="57" %}}
+
+---
+
+## Example 2: Async CLI Chat with Streaming (pt. 2)
+
+3. The main function is structure more or less like the sync version...
+
+    {{% code path="content/llmaas/repl_chat_openai_chatcompletions_async.py" from="16" to="53" %}}
+
+    with some differences in the way we i. create the completion request, by setting `stream=True` to receive a stream of response parts, and by awaiting the response with `async for` instead of just `for`; and ii. consume the stream of response parts
+
+    ```python
+    stream = await client.chat.completions.create(..., stream=True) # create the request + open response stream
+    answer_parts = [] # buffer to store the parts of the answer as they arrive
+    async for item in stream:
+        chunk = item.choices[0].delta.content or "" # get each chuck of the answer as it arrives (if any)
+        answer_parts.append(chunk) # store the chunk in the buffer
+    messages.append(dict(role="assistant", content="".join(answer_parts))) # reconstract the full answer and store it in the conversation history
+    ```
+
+    - notice the `.delta` field in the response parts
+    - notice that partial responses should be printed with `print(..., end="", flush=True)` to avoid buffering issues in the terminal
+
+---
+
+## Example 2: Async CLI Chat with Streaming (pt. 3)
+
+4. Full code [here](./repl_chat_openai_chatcompletions_async.py)
+
+5. Example of interaction (start with `python path/to/script_async.py`):
+
+```text
+Enter your API key for https://openrouter.ai/api/v1/: sk-or-v1-XXXXXXXXXXXXXXXXXXXXXXXXX
+Using model: openrouter/auto
+Type '/exit' or '/quit' to stop. Type '/retry' to retry the last message.
+
+you> hi bro
+
+assistant> Hey! How’s it going? How can I help today? I can answer questions, explain things, help with writing or editing, brainstorm ideas, or assist with code—tell me what you need.
+
+you> can you generate the first 20 verses of the divine comedy, in english?
+assistant> Sure—do you want the first 20 lines from Inferno, Canto I in Henry Wadsworth Longfellow’s public-domain English translation, or would you prefer a different translation? I can paste exactly whichever you choose.
+
+you> yeah that's fine
+
+assistant> Here are the first 20 lines of Inferno, Canto I, from Henry Wadsworth Longfellow's translation of Dante Alighieri's *Divine Comedy*:
+assistant> 
+assistant> Midway upon the journey of our life
+assistant> I found myself within a forest dark,
+assistant> For the strayed path had filled my soul with strife.
+assistant> How hard a thing it is to tell what deep
+assistant> And tangled wood this was, how wild and steep,
+assistant> Which on my memory leaves so keen a fear!
+assistant> So bitter is it, death is slight relief;
+assistant> But to set forth the goodness that I found,
+assistant> I'll speak of other things that there appeared.
+assistant> I know not how I entered it, so deep
+assistant> I had become in slumber at that hour
+assistant> When I had wandered from the path of truth.
+assistant> 
+assistant> But after I had reached a hill’s low foot,
+assistant> Where the long valley terminating had
+assistant> My fear, a place, I say, that any heart
+assistant> With dread doth pierce; and when I looked above,
+assistant> I saw its highest point already clothed
+assistant> With rays of the planet that guides man aright
+assistant> On every path. Then was the fear a while
+assistant> Abated.
+assistant> 
+assistant> Let me know if you’d like more!
+
+you> Goodbye!
+```
+
+6. When you run it, pay attention to:
+    - perceived latency (first token arrives earlier than full-response mode)
+
+{{% /section %}}
+
+---
+
+{{% section %}}
+
+## Exercise 1: Caching Sync Requests
+
+> __Problem__: when experimenting with _programmatic_ LLM interfaces, one does a lot of trial and erros, possibly consuming credits, or wasting attempts w.r.t. rate limits, etc.
+
+> __Idea__: implement a simple _caching_ mechanism for your program, so that you can store the responses of the model for given inputs, and reuse them when the same inputs are encountered again (also good for _reproducibility_ and _debugging_ purposes)
+
+### TO-DO List
+
+1. Implement some caching mechanism for the Sync CLI Chat program, so that Chat Completion requests are cached on the file system before being issued
+2. Upon doing a new request to the model, first check if the same request has already been made before, and if so, return the cached response instead of issuing a new request to the model
+
+---
+
+## Exercise 1: Caching Sync Requests (cont.)
+
+### Decision points and hints
+
+- Where to store the cache? 
+    * e.g. in local untrucked folder, temp folder, home sub-folder, etc.
+- How to index the caches? A.k.a. when a cache is hit? 
+    * same last message? same conversation history? same model and parameters? same temperature? same model?
+- How to store the cache?
+    * e.g. as YAML/JSON files, with a naming convention based on the cache index?
+    * how to simply cache lookup then?
+- How to restructure the code?
+
+### How to test it?
+
+- run the program, and try to send the same message twice, to see if the second time the response is returned from the cache (e.g. by printing a message like "Cache hit! Returning cached response."), and check that the response is indeed the same as the first time
+- try to change the message slightly (e.g. by adding a punctuation mark), and see that the cache is not hit, and a new request is sent to the model, and check that the response is different from the first time
+
+{{% /section %}}
+
+---
+
+{{% section %}}
+
+## Exercise 2: Retry and Exponential Backoff 
+
+> __Problem__: when interacting with LLMs via Web APIs, it may happen that some requests _fail_ due to _transient issues_ (e.g. network errors, <u>rate limits</u>, etc.)
+
+> __Solution__: it is good practice to implement some (configurable) _retry mechanism_ with (configurable) [exponential backoff](https://en.wikipedia.org/wiki/Exponential_backoff) to handle such cases gracefully
+
+### TO-DO List
+
+1. Implement a retry + delay mechanism for the Sync CLI Chat program, so that 
+    - when a request to the model fails, the program _automatically retries_ the request after a _certain delay_, up to a _maximum_ number of _retries_
+    - the _delay_ between retries _increases exponentially_ (e.g. 1s, 2s, 4s, 8s, etc.) to avoid overwhelming the server and to give it some time to recover from transient issues
+2. Let all these parameters (e.g. number of retries, initial delay, backoff factor, etc.) be configurable via env vars or command line arguments (with smart defaults)
+
+---
+
+## Exercise 2: Retry and Exponential Backoff (cont.)
+
+### Decision points and hints
+
+- How to detect a failed request? 
+    * e.g. catch exceptions from the client library, check HTTP status codes, etc.
+- How to implement the retry mechanism?
+    * e.g. with a simple loop and `try-except` block, or with a more sophisticated library like `tenacity`?
+- How to implement the exponential backoff?
+    * e.g. with a simple calculation based on the retry count, or with a library like `tenacity` that has built-in support for exponential backoff
+- How to make the parameters configurable?
+    * e.g. via env vars, command line arguments, or a configuration file? consider using `argparse` for command line arguments, and `os.getenv` for env vars
+- How to restructure the code?
+    * e.g. separate the retry logic into a decorator or a helper function, to keep the main logic of the program clean and focused on the chat interaction
+
+### How to test it?
+
+- run the program, and simulate a transient failure (e.g. by disconnecting the network, or by sending too many requests to trigger rate limits), and see that the program retries the request with increasing delays, and eventually succeeds or gives up after the maximum number of retries
+- try to configure the parameters (e.g. number of retries, initial delay, backoff factor) and see that the retry behavior changes accordingly (e.g. more retries, longer delays, etc.)
 
 {{% /section %}}
 
