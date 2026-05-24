@@ -939,10 +939,10 @@ __TL;DR__: forcing the model to _produce output_ in a specific format (e.g. JSON
 
 {{% section %}}
 
-## Pydantic models with documentation strings (pt. 1)
+## Pydantic classes with documentation strings (pt. 1)
 
-1. Core idea behind `pydantic` is to define _data models_ as Python classes extending `pydantic.BaseModel`
-    + with type annotations for the fields, also borrowing types from the Python standard library (e.g. `datetime`, `Optional`, etc.)
+1. Core idea behind `pydantic` is to define _data models_ as __Python classes__ extending `pydantic.BaseModel`
+    + with type __annotations__ for the _fields_, also borrowing types from the Python standard library (e.g. `datetime`, `Optional`, etc.)
 
     ```python
     from typing import Optional
@@ -961,16 +961,16 @@ __TL;DR__: forcing the model to _produce output_ in a specific format (e.g. JSON
         timestamp: datetime
     ```
 
-    + one may also have nested models, optional fields, default values, etc.
-    + `pydantic` model $\approx$ data classes with default _validation_ and _serialization_ logic
+    + one may also have nested data models, _optional_ fields, _default_ values, etc.
+    + `pydantic` data model $\approx$ data classes with default _validation_ and _serialization_ logic
         - automatically implemented constructurs accepting arguments named after the field, with _type_ checking and validation (e.g. `User(name="John Doe", age=30)`)
         - methods to serialize the model to JSON (e.g. `user.model_dump_json()`) and to generate JSON Schema (e.g. `User.model_json_schema()`)
 
 ---
 
-## Pydantic models with documentation strings (pt. 2)
+## Pydantic classes with documentation strings (pt. 2)
 
-2. To make the model more understandable to the LLM, one _should_ add __documentation strings__ to the fields, which will be included in the generated JSON Schema as `description` fields—also good for setting _default values_ or default _factories_
+2. To make the data model understandable to the LLM, one _should_ add __documentation strings__ to the fields, which will be included in the generated JSON Schema as `description` fields—also good for setting _default values_ or default _factories_
 
     ```python
     from typing import Optional
@@ -1043,6 +1043,214 @@ __TL;DR__: forcing the model to _produce output_ in a specific format (e.g. JSON
         title: User
         type: object
     ```
+
+{{% /section %}}
+
+---
+
+{{< import path="reusable/running-example.md" >}}
+
+---
+
+{{% section %}}
+
+## Example 3: Structured Output with Pydantic Classes (pt. 1)
+
+> __Goal__: let's _extract_ structured information from the candidates' _presentation letters_
+- In particular:
+    + information about the _applicant_ (name, strengths, weaknesses, etc.), to see whether the letter is actually _positive_
+    + information about the _authors_ of the letter (e.g. name, position, relationship with the applicant, etc.), to see whether the letter is actually _credible_
+    + give a reproducible and grounded _recipe_ for __scoring__ the letter based on these aspects 
+
+{{% fragment %}}
+
+1. Let's import `openai` and initialize the client as usual:
+
+    {{% code path="content/llmaas/letter_evaluator_openai.py" from="1" to="8" %}}
+
+2. Let's design a system prompt to contain general instructions for the model
+
+    {{% code path="content/llmaas/letter_evaluator_openai.py" from="11" to="16" %}}
+
+{{% /fragment %}}
+
+---
+
+## Example 3: Structured Output with Pydantic Classes (pt. 2)
+
+3. Let's define `pydantic` classes to represent the target format, with _documentation strings_ to complement the specification
+
+    - Imports:
+
+        {{% code path="content/llmaas/letter_evaluator_openai.py" from="31" to="32" %}}
+
+    - A class for the _applicant_'s information:
+
+        {{% code path="content/llmaas/letter_evaluator_openai.py" from="34" to="43" %}}
+
+    - A class for the _author_'s information:
+
+        {{% code path="content/llmaas/letter_evaluator_openai.py" from="45" to="55" %}}
+
+    - A class for the overall _evaluation_ of the letter, including the extracted information and the final score:
+
+        {{% code path="content/llmaas/letter_evaluator_openai.py" from="57" to="61" %}}
+
+        * notice that instructions for scoring are contained in another string
+
+---
+
+## Example 3: Structured Output with Pydantic Classes (pt. 3)
+
+4. _Instructions_ for _scoring_ can be provided as well in _natural language_, yet better to be precise and give the LLM a _"recipe"_ for scoring
+
+    {{% code path="content/llmaas/letter_evaluator_openai.py" from="18" to="28" %}}
+
+6. With these ingredients in mind, the automatic evaluation logic is as simple as a _single request–response interaction_ with the LLM:
+
+    {{% code path="content/llmaas/letter_evaluator_openai.py" from="64" to="76" %}}
+
+    notice that:
+
+    - function `client.chat.completions.`<u>`parse`</u>`(...)` is called in place of `.create(...)`
+        + to automatically parse the model's response into an instance of the `LetterInfo` 
+    - the `response_format` parameter is set to a _reference_ to the `LetterInfo` class
+        + `openai` will automatically generate the corresponding JSON Schema from the class definition, and include it in the request 
+
+---
+
+## Example 3: Structured Output with Pydantic Classes (pt. 4)
+
+7. Full code [here](./letter_evaluator_openai.py)
+
+8. At this point, the logic of the program is trivial (load letter file $\rightarrow$ call `evaluate_letter(...)` $\rightarrow$ print the evaluation):
+    
+    {{% code path="content/llmaas/letter_evaluator_openai.py" from="79" to="92" %}}
+
+9. Possible results below:
+
+{{% multicol %}}
+{{% col class="col-4" %}}
+{{% code path="content/llmaas/structured-output-mario-rossi.yml" %}}
+{{% /col %}}
+{{% col class="col-4" %}}
+{{% code path="content/llmaas/structured-output-jean-dupont.yml" %}}
+{{% /col %}}
+{{% col class="col-4" %}}
+{{% code path="content/llmaas/structured-output-mohammed-ali.yml" %}}
+{{% /col %}}
+{{% /multicol %}}
+
+{{% /section %}}
+
+---
+
+## Exercise 3: Improving Letter Scoring with (even more) Structured Output
+
+> __Problem__: the scoring recipe provided to the model is still quite vague and unstructured, which may lead to _inconsistent_ and _non-reproducible_ scores. Even when good, scores are not _explainable_, as the reasoning behind them is not made explicit.
+
+{{% fragment %}}
+### TO-DO List
+1. let's turn the scoring recipe into a _checklist_ of criteria
+2. let's have a Pydantic class with as many __boolean fields__ as the criterial in the checklist
+3. let's ask the _LLM_ to set the boolean fields by analysing the _input letter_
+4. let's write down the _algorithm_ to compute the final score based on the boolean fields, as a _function_ in the Pydantic _class_
+    + the scoring logic is now _reproducible_ and _explainable_
+    + the hallucination margin is reduced, as the model is not asked to directly produce a score, but rather to fill in the boolean fields based on the content of the letter, which is an easier task
+{{% /fragment %}}
+
+---
+
+{{% section %}}
+
+## Exercise 4: Extract Structured Information from Pictures (pt. 1)
+
+> __Goal__: let's say the committee wants to extract structured information from the ID documents of the candidates, which are provided as pictures in the application form
+
+{{% fragment %}}
+### TO-DO List
+1. let's use some LLM with _vision capabilities_ (e.g. [OR model `google/gemma-4-26b-a4b-it:free`](https://openrouter.ai/google/gemma-4-26b-a4b-it:free))
+2. let's design a prompt to ask the model to extract structured information from the ID document, such as name, date of birth, ID number, _expiration date_, etc.
+3. let's define a Pydantic class to represent the extracted information, with appropriate fields and documentation strings
+4. let's call the LLM _with the picture_ of the ID document as input, and get the structured information as output
+5. let's test the program with _different ID documents_, and see how well the model can extract the information
+{{% /fragment %}}
+
+---
+
+## Exercise 4: Extract Structured Information from Pictures (pt. 2)
+
+### How to pass images to the model?
+
+- Many ways, documented [here](https://developers.openai.com/api/docs/guides/images-vision?format=base64-encoded#giving-a-model-images-as-input), simplest one is passing [base64-encoded](https://en.wikipedia.org/wiki/Base64) image in the `content` field of a message:
+
+- [HOW-TO] Encoding an image in base64 and passing it to the model:
+
+    ```python
+    import base64
+
+    # Function to encode the image
+    def encode_image(image_path):
+        with open(image_path, "rb") as image_file:
+            return base64.b64encode(image_file.read()).decode("utf-8")
+    ```
+
+- [HOW-TO] Constructing a message with both _text_ and _image_ content (notice that the `content` field is now a list of _typed_ pieces):
+
+    ```python
+    def content_with_image(role, text, image_path):
+        return dict(
+            role=role,
+            content=[
+                dict(type="input_text", text=text),           # vvvv  TODO change jpeg with your image format if needed (e.g. png)
+                dict(type="input_image", image_url=f"data:image/jpeg;base64,{encode_image(image_path)}"),
+            ],
+        )
+    ```
+
+- [HOW-TO] Define the _Pydantic class_ to represent the expected structured information extracted from the ID document:
+
+    ```python
+    from pydantic import BaseModel, Field
+    from datetime import date
+
+    class IDDocumentInfo(BaseModel):
+        """Structured information extracted from an ID document."""
+
+        name: str = Field(..., description="The full name of the person in the ID document")
+        date_of_birth: date = Field(..., description="The date of birth of the person in the ID document")
+        id_number: str = Field(..., description="The ID number of the document")
+        expiration_date: date = Field(..., description="The expiration date of the document")
+    ```
+
+---
+
+## Exercise 4: Extract Structured Information from Pictures (pt. 3)
+
+- [HOW-TO] Call the LLM with the message containing the image, and parse the response as an instance of the `IDDocumentInfo` class:
+
+    ```python
+    import base64
+    from openai import OpenAI
+
+    client = OpenAI(...)
+
+    response = client.chat.completions.parse(
+        model="google/gemma-4-26b-a4b-it:free",
+        messages=[
+            {"role": "system", "content": "You are an assistant that extracts structured information from ID documents."},
+            content_with_image("user", "Please extract the information from this ID document.", "path/to/id_document.jpg")
+        ],
+        response_format=IDDocumentInfo
+    )
+
+    result = response.choices[0].message.parsed # sopposedly an instance of IDDocumentInfo, but always good to check and validate the output
+    ```
+
+- [BEWARE] There are limitations w.r.t. input data [on OpenAI](https://developers.openai.com/api/docs/guides/images-vision#image-input-requirements) (and what about [OR](https://openrouter.ai/docs/guides/overview/multimodal/image-understanding)?)
+
+    <!-- ![](./openai-image-input-limits.png) -->
+    {{< image src="./openai-image-input-limits.png" alt="OpenAI image input limits" class="img-fluid" >}}
 
 {{% /section %}}
 

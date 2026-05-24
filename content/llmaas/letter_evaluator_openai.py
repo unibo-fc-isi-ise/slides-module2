@@ -1,13 +1,9 @@
 import os
-from typing import Optional
 from openai import OpenAI
-from pydantic import BaseModel, Field
-
 
 base_url = os.environ.get("OPENAI_BASE_URL", "https://openrouter.ai/api/v1/")
 api_key = os.environ.get("OPENAI_API_KEY") or input(f"Enter your API key for {base_url}: ")
 model = os.environ.get("OPENAI_MODEL", "openrouter/auto")
-
 
 client = OpenAI(base_url=base_url, api_key=api_key)
 
@@ -30,6 +26,10 @@ Start by maximum and decrease by 1 for each issue among the following:
 - author mentions weaknesses about the applicant explicitly or implicitly,
 - letter is not tailored for a specific PhD programme.
 """
+
+
+from typing import Optional
+from pydantic import BaseModel, Field
 
 class ApplicantInfo(BaseModel):
     """Structured information about the applicant, extracted from the letter."""
@@ -62,7 +62,6 @@ class LetterInfo(BaseModel):
 
 
 def evaluate_letter(letter_text: str, client: OpenAI = client, model: str = model) -> LetterInfo:
-    """Evaluate the letter and extract structured information in JSON."""
     response = client.chat.completions.parse(
         model=model,
         messages=[
